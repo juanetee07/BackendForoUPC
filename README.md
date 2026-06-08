@@ -37,7 +37,7 @@ Su objetivo principal es mejorar la transparencia, la organización y la partici
 ## Integrantes
 * Mayra Moyano
 * Juan Larcher
-* Thiago Amante
+* Tiago Nicolitsis
 
 ## Repositorio Principal
 Toda la documentación del proyecto se encuentra en el siguiente repositorio:
