@@ -1,4 +1,4 @@
-package com.upc.entity.resoluciones;
+package com.upc.demo.entity.resoluciones;
 
 import jakarta.persistence.*;
 import lombok.*;
