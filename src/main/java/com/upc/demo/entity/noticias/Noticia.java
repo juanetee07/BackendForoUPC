@@ -37,9 +37,9 @@ public class Noticia {
     private CategoriaNoticia categoriaNoticia;
 
     /*Un usuario puede crear muchas noticias*/
-    @ManyToOne
+    /*@ManyToOne
     @JoinColumn(name = "autor_id")
-    private Usuario autor;
+    private Usuario autor;*/
 
     /*Una noticia puede tener varios archivos*/
     @OneToMany(mappedBy = "noticia")
