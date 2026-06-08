@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "usuarios")
@@ -43,4 +44,12 @@ public class Usuario {
 
     @Column(name = "ultimo_acceso")
     private LocalDateTime ultimoAcceso;
+
+    @ManyToMany
+    @JoinTable(
+            name = "usuarios",
+            joinColumns = @JoinColumn(name = "id_usuario"),
+            inverseJoinColumns = @JoinColumn(name = "id_rol")
+    )
+    private Set<Rol> roles;
 }
