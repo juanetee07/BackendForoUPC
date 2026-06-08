@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="upcDemo" type="Application" factoryName="Application">
+    <envs>
+      <env name="DB_USER" value="root" />
+      <env name="DB_PASSWORD" value="1234" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="com.upc.demo.DemoApplication" />
+    <module name="demo" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
