@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "auditoria")
@@ -33,7 +32,4 @@ public class Auditoria {
     private String valorAnterior;
 
     private String valorNuevo;
-
-    @OneToMany(mappedBy = "usuario")
-    private List<Auditoria> auditorias;
 }

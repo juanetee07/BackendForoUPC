@@ -56,4 +56,7 @@ public class Usuario {
 
     @OneToMany(mappedBy = "usuario")
     private List<Sesion> sesiones;
+
+    @OneToMany(mappedBy = "usuario")
+    private List<Auditoria> auditorias;
 }
