@@ -18,8 +18,8 @@ public class ArchivoResolucion {
     private Long idArchivo;
 
     @ManyToOne
-    @JoinColumn(name = "resolucion_id")
-    private ArchivoResolucion resolucion;
+    @JoinColumn(name = "resolucion_id", nullable = false)
+    private Resolucion resolucion;
 
     @Column(nullable = false, length = 255)
     private String nombre;

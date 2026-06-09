@@ -1,5 +1,6 @@
 package com.upc.demo.entity.resoluciones;
 
+import com.upc.demo.entity.usuarios.Usuario;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,17 +21,16 @@ public class Comentario {
     private Long idComentario;
 
     @ManyToOne
+    @JoinColumn(name = "id_usuario", nullable = false)
+    private Usuario usuario;
+
+    @ManyToOne
     @JoinColumn(name = "id_resolucion", nullable = false)
-    private Comentario resolucion;
+    private Resolucion resolucion;
 
     @ManyToOne
     @JoinColumn(name = "id_carrera", nullable = false)
-    private Comentario carrera;
-
-    // FK pendiente hasta que exista la entidad Usuario
-    // @ManyToOne
-    // @JoinColumn(name = "id_usuario")
-    // private Usuario usuario;
+    private Carrera carrera;
 
     @Column(name = "anio_carrera", nullable = false)
     private Integer anioCarrera;

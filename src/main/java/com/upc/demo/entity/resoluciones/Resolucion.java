@@ -1,11 +1,8 @@
 package com.upc.demo.entity.resoluciones;
 
+import com.upc.demo.entity.usuarios.Usuario;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -33,14 +30,12 @@ public class Resolucion {
     private String descripcion;
 
     @ManyToOne
-    @JoinColumn(name = "categoria_id")
-    private Resolucion categoria;
+    @JoinColumn(name = "categoria_id", nullable = false)
+    private CategoriaResolucion categoria;
 
-    // FK pendiente (módulo Usuarios)
-    // Se agregará cuando exista la entidad Usuario
-    // @ManyToOne
-    // @JoinColumn(name = "autor_id")
-    // private Usuario autor;
+    @ManyToOne
+    @JoinColumn(name = "autor_id")
+    private Usuario autor;
 
     @Column(name = "fecha_creacion", nullable = false)
     private LocalDateTime fechaCreacion;
