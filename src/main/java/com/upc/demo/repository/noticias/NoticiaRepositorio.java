@@ -16,7 +16,7 @@ public interface NoticiaRepositorio extends JpaRepository<Noticia, Long>{
     List<Noticia> findByTituloContainingIgnoreCase(String titulo);
 
     /*Buscar todas las noticias de un autor*/
-    List<Noticia> findByAutorId(Long autorId);
+    List<Noticia> findByAutorIdUsuario(Long idUsuario);
 
     /*Buscar todas las noticias de una categoria*/
     List<Noticia> findByCategoriaNoticiaId(Long categoriaId);

@@ -1,5 +1,6 @@
 package com.upc.demo.entity.noticias;
 
+import com.upc.demo.entity.usuarios.Usuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,9 +38,9 @@ public class Noticia {
     private CategoriaNoticia categoriaNoticia;
 
     /*Un usuario puede crear muchas noticias*/
-    /*@ManyToOne
+    @ManyToOne
     @JoinColumn(name = "autor_id")
-    private Usuario autor;*/
+    private Usuario autor;
 
     /*Una noticia puede tener varios archivos*/
     @OneToMany(mappedBy = "noticia")
