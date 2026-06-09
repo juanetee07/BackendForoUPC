@@ -3,6 +3,7 @@ package com.upc.demo.entity.usuarios;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import java.util.List;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -52,4 +53,7 @@ public class Usuario {
             inverseJoinColumns = @JoinColumn(name = "id_rol")
     )
     private Set<Rol> roles;
+
+    @OneToMany(mappedBy = "usuario")
+    private List<Sesion> sesiones;
 }
