@@ -46,13 +46,9 @@ public class Usuario {
     @Column(name = "ultimo_acceso")
     private LocalDateTime ultimoAcceso;
 
-    @ManyToMany
-    @JoinTable(
-            name = "usuarios",
-            joinColumns = @JoinColumn(name = "id_usuario"),
-            inverseJoinColumns = @JoinColumn(name = "id_rol")
-    )
-    private Set<Rol> roles;
+    @ManyToOne
+    @JoinColumn(name = "id_rol")
+    private Rol rol;
 
     @OneToMany(mappedBy = "usuario")
     private List<Sesion> sesiones;

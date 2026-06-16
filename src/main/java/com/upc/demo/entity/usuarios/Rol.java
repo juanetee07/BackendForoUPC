@@ -20,6 +20,6 @@ public class Rol {
     @Column(nullable = false, unique = true)
     private String nombre;
 
-    @ManyToMany(mappedBy = "roles")
+    @OneToMany(mappedBy = "rol")
     private Set<Usuario> usuarios;
 }
