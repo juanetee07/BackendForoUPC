@@ -23,6 +23,6 @@ public class CategoriaNoticia {
     private String nombre;
 
     /*Una categoría puede tener muchas noticias*/
-    @OneToMany(mappedBy = "categoriaNoticia")
+    @OneToMany(mappedBy = "categoriaNoticia", fetch = FetchType.LAZY)
     private List<Noticia> noticias;
 }

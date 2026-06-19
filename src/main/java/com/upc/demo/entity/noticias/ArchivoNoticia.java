@@ -22,7 +22,7 @@ public class ArchivoNoticia {
     private String tipo;
 
     /*Muchos archivos pueden pertenecer a una noticia*/
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="noticia_id")
     private Noticia noticia;
 }

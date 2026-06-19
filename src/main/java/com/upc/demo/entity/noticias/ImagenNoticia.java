@@ -22,7 +22,7 @@ public class ImagenNoticia {
     private String epigrafe;
 
     /*Muchas imagenes pueden pertenecer a una noticia*/
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="noticia_id")
     private Noticia noticia;
 

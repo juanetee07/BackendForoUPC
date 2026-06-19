@@ -33,20 +33,20 @@ public class Noticia {
     private EstadoNoticia estado;
 
     /*Muchas noticias pueden pertenecer a una categoria*/
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "categoria_id")
     private CategoriaNoticia categoriaNoticia;
 
     /*Un usuario puede crear muchas noticias*/
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "autor_id")
     private Usuario autor;
 
     /*Una noticia puede tener varios archivos*/
-    @OneToMany(mappedBy = "noticia")
+    @OneToMany(mappedBy = "noticia", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArchivoNoticia> archivos;
 
     /*Una noticia puede tener varias imagenes*/
-    @OneToMany(mappedBy = "noticia")
+    @OneToMany(mappedBy = "noticia", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ImagenNoticia> imagenes;
 }
