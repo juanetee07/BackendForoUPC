@@ -27,6 +27,8 @@ public class Noticia {
 
     private LocalDateTime fechaCreacion;
 
+    private LocalDateTime fechaPublicacion;
+
     private LocalDateTime fechaActualizacion;
 
     @Enumerated(EnumType.STRING)

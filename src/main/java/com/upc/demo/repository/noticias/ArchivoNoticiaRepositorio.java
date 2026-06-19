@@ -12,6 +12,9 @@ public interface ArchivoNoticiaRepositorio extends JpaRepository<ArchivoNoticia,
     /*Buscar archivos de noticias por nombre*/
     List<ArchivoNoticia> findByNombre(String nombre);
 
+    /*Buscar archivos de noticias cuyo nombre contenga una cadena (sin importar mayúsculas/minúsculas)*/
+    List<ArchivoNoticia> findByNombreContainingIgnoreCase(String nombre);
+
     /*Buscar archivos de noticias cuyo tipo contenga una cadena (sin importar mayúsculas/minúsculas)*/
     List<ArchivoNoticia> findByTipoContainingIgnoreCase(String tipo);
 
