@@ -47,12 +47,10 @@ public class NoticiaServicio implements INoticiaServicio{
         }
 
         /*Buscar una categoria*/
-        CategoriaNoticia categoria = categoriaRepo.findById(noticia.getCategoriaNoticia().getId()).orElseThrow(
-                () -> new RuntimeException("Categoría no encontrada"));
+        CategoriaNoticia categoria = categoriaRepo.findById(noticia.getCategoriaNoticia().getId()).orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
         /*Se debe de vincular un autor a la noticia*/
-        Usuario autor = usuarioRepo.findById(idAutor)
-                .orElseThrow(() -> new RuntimeException("Autor no encontrado"));
+        Usuario autor = usuarioRepo.findById(idAutor).orElseThrow(() -> new RuntimeException("Autor no encontrado"));
 
         /*Se debe de verificar si el usuario tiene asignado un rol*/
         if (autor.getRol() == null) {
@@ -81,12 +79,10 @@ public class NoticiaServicio implements INoticiaServicio{
     public Noticia editarNoticia(Long idNoticia, Noticia noticiaActualizada, Long idAutor) {
 
         /*Se debe de buscar que la noticia exista*/
-        Noticia noticiaExistente = noticiaRepo.findById(idNoticia).orElseThrow(
-                () -> new RuntimeException("Noticia no encontrada"));
+        Noticia noticiaExistente = noticiaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("Noticia no encontrada"));
 
         /*Se debe de buscar el usuario que exista*/
-        Usuario usuario = usuarioRepo.findById(idAutor).orElseThrow(
-                () -> new RuntimeException("Usuario no encontrado"));
+        Usuario usuario = usuarioRepo.findById(idAutor).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         /*Si el titulo de la noticia no existe o si el titulo de esa noticia esta vacia entonces no podemos guardar la actualizacion */
         if (noticiaActualizada.getTitulo() == null || noticiaActualizada.getTitulo().trim().isEmpty()) {
@@ -129,5 +125,44 @@ public class NoticiaServicio implements INoticiaServicio{
         noticiaExistente.setFechaActualizacion(LocalDateTime.now());
 
         return noticiaRepo.save(noticiaExistente);
+    }
+
+    @Override
+    public Noticia publicarNoticia(Long idNoticia, Long idAutor) {
+
+        Noticia noticia = noticiaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("Noticia no encontrada"));
+
+        Usuario usuario = usuarioRepo.findById(idAutor).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        /*Se debe de verificar si el usuario tiene asignado un rol*/
+        if (usuario.getRol() == null) {
+            throw new RuntimeException("El usuario no tiene un rol asignado");
+        }
+
+        String rol = usuario.getRol().getNombre();
+
+        /*Se verifica que el usuario tenga los permisos necesarios */
+        if (!rol.equalsIgnoreCase("ADMINISTRADOR") && !rol.equalsIgnoreCase("PERSONAL_ESCUELA")) {
+            throw new RuntimeException("No tiene permisos para publicar noticias");
+        }
+
+        /*Se verifica si el usuario PERSONAL_ESCUELA redacto esa noticia para poder editarla*/
+        if (rol.equalsIgnoreCase("PERSONAL_ESCUELA") && !noticia.getAutor().getIdUsuario().equals(usuario.getIdUsuario())) {
+            throw new RuntimeException("Solo puede publicar sus propias noticias");
+        }
+
+        /*Verifica que el estado de la noticia no sea null*/
+        if (noticia.getEstado() == null){
+            throw new RuntimeException("Solo se puede publicar una noticia que se encuentre en un estado BORRADOR");
+        }
+
+        /*Verifica que el estado de la noticia no sea distinto a borrador*/
+        if (noticia.getEstado() != EstadoNoticia.BORRADOR) {
+            throw new RuntimeException("Solo se puede publicar una noticia en ESTADO BORRADOR");
+        }
+
+        noticia.setEstado(EstadoNoticia.PUBLICADA);
+        noticia.setFechaPublicacion(LocalDateTime.now());
+        return noticiaRepo.save(noticia);
     }
 }
