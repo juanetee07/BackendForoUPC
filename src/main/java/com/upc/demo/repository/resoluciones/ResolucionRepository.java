@@ -13,7 +13,7 @@ public interface ResolucionRepository extends JpaRepository<Resolucion, Long> {
     /**
      * Busca una resolución utilizando su número.
      *
-     * Ejemplo:
+     * Ejem
      * RES-2026-001
      *
      * Se utiliza principalmente para:
