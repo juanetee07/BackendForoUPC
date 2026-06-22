@@ -197,4 +197,21 @@ public class NoticiaServicio implements INoticiaServicio{
 
         return noticiaRepo.save(noticia);
     }
+
+    @Override
+    public Noticia consultarNoticia(Long idNoticia) {
+
+        /*Verificar que la noticia exista*/
+        Noticia noticia = noticiaRepo.findById(idNoticia)
+                .orElseThrow(() ->
+                        new RuntimeException("Noticia no encontrada"));
+
+        /*Se verifica el estado*/
+        if (noticia.getEstado() != EstadoNoticia.PUBLICADA) {
+            throw new RuntimeException(
+                    "La noticia no se encuentra disponible para consulta");
+        }
+
+        return noticia;
+    }
 }

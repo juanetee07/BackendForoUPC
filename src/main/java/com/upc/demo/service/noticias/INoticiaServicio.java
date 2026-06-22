@@ -12,4 +12,6 @@ public interface INoticiaServicio {
     Noticia publicarNoticia(Long idNoticia, Long idAutor);
 
     Noticia cambiarEstado(Long idNoticia, EstadoNoticia nuevoEstado, Long idAutor);
+
+    Noticia consultarNoticia(Long idNoticia);
 }
