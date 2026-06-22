@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class NoticiaServicio implements INoticiaServicio{
@@ -213,5 +214,22 @@ public class NoticiaServicio implements INoticiaServicio{
         }
 
         return noticia;
+    }
+
+    @Override
+    public List<Noticia> buscarNoticiaPorTitulo(String titulo) {
+        return noticiaRepo.findByTituloContainingIgnoreCase(titulo)
+                .stream().filter(n -> n.getEstado() == EstadoNoticia.PUBLICADA).toList();
+    }
+
+    @Override
+    public List<Noticia> buscarNoticiaPorCategoria(Long categoriaId) {
+        return noticiaRepo.findByCategoriaNoticiaId(categoriaId).stream().filter(noticia -> noticia.getEstado() == EstadoNoticia.PUBLICADA).toList();
+
+    }
+
+    @Override
+    public List<Noticia> buscarNoticiaPorFecha(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
+        return noticiaRepo.findByFechaPublicacionBetween(fechaInicio, fechaFin).stream().filter(n -> n.getEstado() == EstadoNoticia.PUBLICADA).toList();
     }
 }

@@ -3,6 +3,9 @@ package com.upc.demo.service.noticias;
 import com.upc.demo.entity.noticias.EstadoNoticia;
 import com.upc.demo.entity.noticias.Noticia;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 public interface INoticiaServicio {
 
     Noticia crearNoticia(Noticia noticia, Long idAutor);
@@ -14,4 +17,10 @@ public interface INoticiaServicio {
     Noticia cambiarEstado(Long idNoticia, EstadoNoticia nuevoEstado, Long idAutor);
 
     Noticia consultarNoticia(Long idNoticia);
+
+    List<Noticia> buscarNoticiaPorTitulo(String titulo);
+
+    List<Noticia> buscarNoticiaPorCategoria(Long categoriaId);
+
+    List<Noticia> buscarNoticiaPorFecha(LocalDateTime fechaInicio, LocalDateTime fechaFin);
 }
