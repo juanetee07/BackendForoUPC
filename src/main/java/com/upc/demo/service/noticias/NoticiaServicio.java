@@ -29,21 +29,21 @@ public class NoticiaServicio implements INoticiaServicio{
 
         /*Si el titulo de esa noticia no existe o si el titulo de esa noticia esta vacia entonces no podemos guardarlo*/
         if (noticia.getTitulo() == null || noticia.getTitulo().trim().isEmpty()){
-            throw new RuntimeException("El título de la noticia es obligatorio");
+            throw new IllegalArgumentException("El título de la noticia es obligatorio");
         }
         /*Se aplica la misma logica que la anterior pero con Cuerpo*/
         if (noticia.getCuerpo() == null || noticia.getCuerpo().trim().isEmpty()) {
-            throw new RuntimeException("El cuerpo de la noticia es obligatorio");
+            throw new IllegalArgumentException("El cuerpo de la noticia es obligatorio");
         }
 
         /*Si la categoria no existe*/
         if (noticia.getCategoriaNoticia() == null) {
-            throw new RuntimeException("La noticia debe tener una categoría");
+            throw new IllegalArgumentException("La noticia debe tener una categoría");
         }
 
         /*Si la categoria no es valida*/
         if (noticia.getCategoriaNoticia().getId() == null) {
-            throw new RuntimeException("Debe seleccionar una categoría válida");
+            throw new IllegalArgumentException("Debe seleccionar una categoría válida");
         }
 
         /*Buscar una categoria*/
@@ -86,19 +86,18 @@ public class NoticiaServicio implements INoticiaServicio{
 
         /*Si el titulo de la noticia no existe o si el titulo de esa noticia esta vacia entonces no podemos guardar la actualizacion */
         if (noticiaActualizada.getTitulo() == null || noticiaActualizada.getTitulo().trim().isEmpty()) {
-            throw new RuntimeException("El título de la noticia es obligatorio");
+            throw new IllegalArgumentException("El título de la noticia es obligatorio");
         }
 
         if (noticiaActualizada.getCuerpo() == null || noticiaActualizada.getCuerpo().trim().isEmpty()) {
-            throw new RuntimeException("El cuerpo de la noticia es obligatorio");
+            throw new IllegalArgumentException("El cuerpo de la noticia es obligatorio");
         }
 
         if (noticiaActualizada.getCategoriaNoticia() == null || noticiaActualizada.getCategoriaNoticia().getId() == null) {
-            throw new RuntimeException("Debe seleccionar una categoría válida");
+            throw new IllegalArgumentException("Debe seleccionar una categoría válida");
         }
 
-        CategoriaNoticia categoria = categoriaRepo.findById(noticiaActualizada.getCategoriaNoticia().getId()).orElseThrow(
-                () -> new RuntimeException("Categoría no encontrada"));
+        CategoriaNoticia categoria = categoriaRepo.findById(noticiaActualizada.getCategoriaNoticia().getId()).orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
         /*Se debe de verificar si el usuario tiene asignado un rol*/
         if (usuario.getRol() == null) {
@@ -163,6 +162,39 @@ public class NoticiaServicio implements INoticiaServicio{
 
         noticia.setEstado(EstadoNoticia.PUBLICADA);
         noticia.setFechaPublicacion(LocalDateTime.now());
+        return noticiaRepo.save(noticia);
+    }
+
+    @Override
+    public Noticia cambiarEstado( Long idNoticia, EstadoNoticia nuevoEstado, Long idAutor) {
+
+        if (nuevoEstado == null) {
+            throw new IllegalArgumentException("El nuevo estado no puede ser nulo.");
+        }
+
+        Noticia noticia = noticiaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("Noticia no encontrada"));
+
+        Usuario usuario = usuarioRepo.findById(idAutor).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        /*Se debe de verificar si el usuario tiene asignado un rol*/
+        if (usuario.getRol() == null || usuario.getRol().getNombre() == null) {
+            throw new RuntimeException("El usuario no tiene un rol asignado");
+        }
+
+        String rol = usuario.getRol().getNombre();
+
+        if (!rol.equalsIgnoreCase("ADMINISTRADOR")) {
+            throw new RuntimeException(
+                    "Solo un administrador puede cambiar el estado de una noticia");
+        }
+
+        if (noticia.getEstado() == nuevoEstado) {
+            throw new RuntimeException("La noticia ya se encuentra en estado: " + nuevoEstado);
+        }
+
+        noticia.setEstado(nuevoEstado);
+        noticia.setFechaActualizacion(LocalDateTime.now());
+
         return noticiaRepo.save(noticia);
     }
 }
