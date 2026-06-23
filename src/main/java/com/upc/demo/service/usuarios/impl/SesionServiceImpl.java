@@ -43,11 +43,21 @@ public class SesionServiceImpl implements SesionService {
 
     @Override
     public List<Sesion> buscarPorUsuario(Long usuarioId) {
+
+        if (usuarioId == null) {
+            throw new IllegalArgumentException("El id del usuario es obligatorio");
+        }
+
         return sesionRepository.findByUsuarioIdUsuario(usuarioId);
     }
 
     @Override
     public List<Sesion> buscarPorActiva(Boolean activa) {
+
+        if (activa == null) {
+            throw new IllegalArgumentException("Debe indicar si la sesión está activa o no");
+        }
+
         return sesionRepository.findByActiva(activa);
     }
 
