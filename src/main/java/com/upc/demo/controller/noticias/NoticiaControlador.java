@@ -53,4 +53,12 @@ public class NoticiaControlador {
         return ResponseEntity.ok(noticiaActualizada);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> eliminarNoticia(
+            @PathVariable Long id){
+
+        noticiaServicio.eliminarNoticia(id);
+
+        return ResponseEntity.ok("La noticia fue eliminada correctamente.");
+    }
 }

@@ -25,4 +25,6 @@ public interface INoticiaServicio {
     List<Noticia> buscarNoticiaPorCategoria(Long categoriaId);
 
     List<Noticia> buscarNoticiaPorFecha(LocalDateTime fechaInicio, LocalDateTime fechaFin);
+
+    Noticia eliminarNoticia(Long idNoticia);
 }

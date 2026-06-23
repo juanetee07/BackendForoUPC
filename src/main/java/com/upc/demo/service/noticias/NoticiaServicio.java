@@ -240,4 +240,14 @@ public class NoticiaServicio implements INoticiaServicio{
     public List<Noticia> buscarNoticiaPorFecha(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
         return noticiaRepo.findByFechaPublicacionBetween(fechaInicio, fechaFin).stream().filter(n -> n.getEstado() == EstadoNoticia.PUBLICADA).toList();
     }
+
+    @Override
+    public Noticia eliminarNoticia(Long idNoticia) {
+
+        Noticia noticia = noticiaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("No existe una noticia con el ID: " + idNoticia));
+
+        noticiaRepo.delete(noticia);
+
+        return noticia;
+    }
 }
