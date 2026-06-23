@@ -12,5 +12,5 @@ public interface ICategoriaServicio {
 
     CategoriaNoticia modificarCategoria(Long idCategoria, CategoriaNoticia categoriaModificada);
 
-    List <CategoriaNoticia> consultarCategoria();
+    CategoriaNoticia consultarCategoria(Long idCategoria);
 }

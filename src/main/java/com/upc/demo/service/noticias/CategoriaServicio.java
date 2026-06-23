@@ -65,15 +65,10 @@ public class CategoriaServicio implements ICategoriaServicio{
     }
 
     @Override
-    public List<CategoriaNoticia> consultarCategoria() {
+    public CategoriaNoticia consultarCategoria(Long idCategoria) {
 
-        List<CategoriaNoticia> categorias = categoriaRepo.findAll();
+        return categoriaRepo.findById(idCategoria).orElseThrow(() -> new RuntimeException("No existe una categoría con el ID: " + idCategoria));
 
-        if (categorias.isEmpty()) {
-            throw new RuntimeException("No existen categorías registradas");
-        }
-
-        return categorias;
     }
 
 

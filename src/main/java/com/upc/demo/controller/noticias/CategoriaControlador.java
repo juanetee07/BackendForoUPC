@@ -4,6 +4,7 @@ import com.upc.demo.entity.noticias.CategoriaNoticia;
 import com.upc.demo.service.noticias.ICategoriaServicio;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,5 +21,13 @@ public class CategoriaControlador {
 
         List<CategoriaNoticia> categoriaNoticias = categoriaServicio.listarCategoria();
         return ResponseEntity.ok(categoriaNoticias);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CategoriaNoticia> consultarCategoria(
+            @PathVariable Long id){
+
+        return ResponseEntity.ok(categoriaServicio.consultarCategoria(id)
+        );
     }
 }
