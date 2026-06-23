@@ -33,10 +33,18 @@ public class CategoriaControlador {
     public ResponseEntity<CategoriaNoticia> crearCategoria(
             @RequestBody CategoriaNoticia categoriaNoticia) {
 
-        CategoriaNoticia nuevaCategoria =
-                categoriaServicio.crearCategoria(categoriaNoticia);
+        CategoriaNoticia nuevaCategoria = categoriaServicio.crearCategoria(categoriaNoticia);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(nuevaCategoria);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCategoria);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CategoriaNoticia> modificarCategoria(
+            @PathVariable Long id,
+            @RequestBody CategoriaNoticia categoriaModificada){
+
+        CategoriaNoticia categoriaActualizada = categoriaServicio.modificarCategoria(id, categoriaModificada);
+
+        return ResponseEntity.ok(categoriaActualizada);
     }
 }
