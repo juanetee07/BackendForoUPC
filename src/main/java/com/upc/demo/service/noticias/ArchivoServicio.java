@@ -1,7 +1,6 @@
 package com.upc.demo.service.noticias;
 
 import com.upc.demo.entity.noticias.ArchivoNoticia;
-import com.upc.demo.entity.noticias.ImagenNoticia;
 import com.upc.demo.entity.noticias.Noticia;
 import com.upc.demo.repository.noticias.ArchivoNoticiaRepositorio;
 import com.upc.demo.repository.noticias.NoticiaRepositorio;
@@ -63,5 +62,14 @@ public class ArchivoServicio implements IArchivoServicio{
         archivoExistente.setNombre(archivoActualizado.getNombre().trim());
 
         return archivoRepo.save(archivoExistente);
+    }
+
+    @Override
+    public ArchivoNoticia eliminarArchivo(Long idArchivo) {
+
+        ArchivoNoticia archivo = archivoRepo.findById(idArchivo).orElseThrow(() -> new RuntimeException("Archivo no encontrado"));
+        archivoRepo.delete(archivo);
+
+        return archivo;
     }
 }

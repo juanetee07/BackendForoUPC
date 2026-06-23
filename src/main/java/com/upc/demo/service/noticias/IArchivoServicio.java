@@ -7,4 +7,6 @@ public interface IArchivoServicio {
     ArchivoNoticia agregarArchivo(ArchivoNoticia archivoNoticia, Long idNoticia);
 
     ArchivoNoticia modificarArchivo(Long idArchivo, ArchivoNoticia archivoActualizado);
+
+    ArchivoNoticia eliminarArchivo(Long idArchivo);
 }
