@@ -9,4 +9,6 @@ public interface IArchivoServicio {
     ArchivoNoticia modificarArchivo(Long idArchivo, ArchivoNoticia archivoActualizado);
 
     ArchivoNoticia eliminarArchivo(Long idArchivo);
+
+    ArchivoNoticia descargarArchivo(Long idArchivo);
 }

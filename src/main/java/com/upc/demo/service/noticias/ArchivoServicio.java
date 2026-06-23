@@ -1,6 +1,7 @@
 package com.upc.demo.service.noticias;
 
 import com.upc.demo.entity.noticias.ArchivoNoticia;
+import com.upc.demo.entity.noticias.EstadoNoticia;
 import com.upc.demo.entity.noticias.Noticia;
 import com.upc.demo.repository.noticias.ArchivoNoticiaRepositorio;
 import com.upc.demo.repository.noticias.NoticiaRepositorio;
@@ -70,6 +71,17 @@ public class ArchivoServicio implements IArchivoServicio{
         ArchivoNoticia archivo = archivoRepo.findById(idArchivo).orElseThrow(() -> new RuntimeException("Archivo no encontrado"));
         archivoRepo.delete(archivo);
 
+        return archivo;
+    }
+
+    @Override
+    public ArchivoNoticia descargarArchivo(Long idArchivo) {
+
+        ArchivoNoticia archivo = archivoRepo.findById(idArchivo).orElseThrow(() -> new RuntimeException("El archivo solicitado no existe."));
+
+        if (archivo.getNoticia().getEstado() != EstadoNoticia.PUBLICADA) {
+            throw new RuntimeException("No se puede descargar el archivo porque la noticia aún no ha sido publicada.");
+        }
         return archivo;
     }
 }
