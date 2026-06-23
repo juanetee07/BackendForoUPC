@@ -2,11 +2,9 @@ package com.upc.demo.controller.noticias;
 
 import com.upc.demo.entity.noticias.CategoriaNoticia;
 import com.upc.demo.service.noticias.ICategoriaServicio;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,5 +27,16 @@ public class CategoriaControlador {
 
         return ResponseEntity.ok(categoriaServicio.consultarCategoria(id)
         );
+    }
+
+    @PostMapping
+    public ResponseEntity<CategoriaNoticia> crearCategoria(
+            @RequestBody CategoriaNoticia categoriaNoticia) {
+
+        CategoriaNoticia nuevaCategoria =
+                categoriaServicio.crearCategoria(categoriaNoticia);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(nuevaCategoria);
     }
 }
