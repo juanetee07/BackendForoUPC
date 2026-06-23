@@ -22,7 +22,8 @@ La plataforma permite administrar:
 Su objetivo principal es mejorar la transparencia, la organización y la participación de la comunidad educativa.
 
 **Modelo entidad relacion**
-<img width="1659" height="1181" alt="ModeloEntidad-Relacion drawio (5)" src="https://github.com/user-attachments/assets/c0606fac-09d6-4a3e-939a-1f0b923f959f" />
+<img width="1660" height="1091" alt="ModeloEntidad-Relacion drawio (6)" src="https://github.com/user-attachments/assets/36b18993-de3a-46e9-93e1-462a945ad01d" />
+
 
 ## Tecnologías
 
