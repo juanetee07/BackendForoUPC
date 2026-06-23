@@ -33,4 +33,20 @@ public class ImagenServicio implements IImagenServicio {
 
         return imagenRepo.save(imagen);
     }
+
+    @Override
+    public ImagenNoticia modificarImagen(Long idImagen, ImagenNoticia imagenActualizada) {
+
+        ImagenNoticia imagenExistente = imagenRepo.findById(idImagen).orElseThrow(() -> new RuntimeException("Imagen no encontrada"));
+
+        if (imagenActualizada.getUrl() == null || imagenActualizada.getUrl().trim().isEmpty()) {
+            throw new RuntimeException("La URL de la imagen es obligatoria");
+        }
+
+        imagenExistente.setUrl(imagenActualizada.getUrl().trim());
+
+        imagenExistente.setEpigrafe(imagenActualizada.getEpigrafe());
+
+        return imagenRepo.save(imagenExistente);
+    }
 }
