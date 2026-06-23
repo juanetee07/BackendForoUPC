@@ -13,4 +13,6 @@ public interface ICategoriaServicio {
     CategoriaNoticia modificarCategoria(Long idCategoria, CategoriaNoticia categoriaModificada);
 
     CategoriaNoticia consultarCategoria(Long idCategoria);
+
+    CategoriaNoticia eliminarCategoria(Long idNoticia);
 }

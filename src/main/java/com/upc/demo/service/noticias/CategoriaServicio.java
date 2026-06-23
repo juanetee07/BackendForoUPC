@@ -71,5 +71,14 @@ public class CategoriaServicio implements ICategoriaServicio{
 
     }
 
+    @Override
+    public CategoriaNoticia eliminarCategoria(Long idNoticia) {
+
+        CategoriaNoticia categoriaNoticia = categoriaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("No existe una categoria con el ID: " + idNoticia));
+        categoriaRepo.delete(categoriaNoticia);
+        
+        return categoriaNoticia;
+    }
+
 
 }
