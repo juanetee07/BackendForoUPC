@@ -16,12 +16,29 @@ public class RecuperacionPasswordServiceImpl implements RecuperacionPasswordServ
 
     @Override
     public RecuperacionPassword guardar(RecuperacionPassword recuperacionPassword) {
+
+        if (recuperacionPassword.getUsuario() == null) {
+            throw new IllegalArgumentException("Debe existir un usuario asociado");
+        }
+
+        if (recuperacionPassword.getToken() == null ||
+                recuperacionPassword.getToken().isBlank()) {
+            throw new IllegalArgumentException("El token es obligatorio");
+        }
+
+        if (recuperacionPasswordRepository.findByToken(recuperacionPassword.getToken()) != null) {
+            throw new RuntimeException("El token ya existe");
+        }
+
         return recuperacionPasswordRepository.save(recuperacionPassword);
     }
 
     @Override
     public RecuperacionPassword buscarPorId(Long id) {
-        return recuperacionPasswordRepository.findById(id).orElse(null);
+
+        return recuperacionPasswordRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Solicitud de recuperación no encontrada"));
     }
 
     @Override
@@ -31,16 +48,41 @@ public class RecuperacionPasswordServiceImpl implements RecuperacionPasswordServ
 
     @Override
     public RecuperacionPassword buscarPorToken(String token) {
-        return recuperacionPasswordRepository.findByToken(token);
+
+        if (token == null || token.isBlank()) {
+            throw new IllegalArgumentException("El token es obligatorio");
+        }
+
+        RecuperacionPassword recuperacion = recuperacionPasswordRepository.findByToken(token);
+
+        if (recuperacion == null) {
+            throw new RuntimeException("Token no encontrado");
+        }
+
+        return recuperacion;
     }
 
     @Override
     public RecuperacionPassword buscarPorUsuario(Long usuarioId) {
-        return recuperacionPasswordRepository.findByUsuarioIdUsuario(usuarioId);
+
+        if (usuarioId == null) {
+            throw new IllegalArgumentException("El id del usuario es obligatorio");
+        }
+
+        RecuperacionPassword recuperacion = recuperacionPasswordRepository.findByUsuarioIdUsuario(usuarioId);
+
+        if (recuperacion == null) {
+            throw new RuntimeException("No existe una solicitud de recuperación para ese usuario");
+        }
+
+        return recuperacion;
     }
 
     @Override
     public void eliminar(Long id) {
+
+        buscarPorId(id);
+
         recuperacionPasswordRepository.deleteById(id);
     }
 }
