@@ -3,11 +3,9 @@ package com.upc.demo.controller.noticias;
 import com.upc.demo.entity.noticias.Noticia;
 import com.upc.demo.service.noticias.INoticiaServicio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,6 +30,16 @@ public class NoticiaControlador {
 
         return ResponseEntity.ok(noticiaServicio.consultarNoticia(id)
         );
+    }
+
+    @PostMapping
+    public ResponseEntity<Noticia> crearNoticia(
+            @RequestBody Noticia noticia,
+            @RequestParam Long idAutor){
+
+        Noticia nuevaNoticia = noticiaServicio.crearNoticia(noticia, idAutor);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaNoticia);
     }
 
 }
