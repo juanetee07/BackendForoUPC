@@ -16,12 +16,24 @@ public class RolServiceImpl implements RolService {
 
     @Override
     public Rol guardar(Rol rol) {
+
+        if (rol.getNombre() == null || rol.getNombre().isBlank()) {
+            throw new IllegalArgumentException("El nombre del rol es obligatorio");
+        }
+
+        if (rolRepository.findByNombre(rol.getNombre()) != null) {
+            throw new RuntimeException("El rol ya existe");
+        }
+
         return rolRepository.save(rol);
     }
 
     @Override
     public Rol buscarPorId(Long id) {
-        return rolRepository.findById(id).orElse(null);
+
+        return rolRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Rol no encontrado"));
     }
 
     @Override
@@ -31,18 +43,19 @@ public class RolServiceImpl implements RolService {
 
     @Override
     public Rol modificar(Long id, Rol rol) {
-        Rol existente = rolRepository.findById(id).orElse(null);
 
-        if (existente != null) {
-            existente.setNombre(rol.getNombre());
-            return rolRepository.save(existente);
-        }
+        Rol existente = buscarPorId(id);
 
-        return null;
+        existente.setNombre(rol.getNombre());
+
+        return rolRepository.save(existente);
     }
 
     @Override
     public void eliminar(Long id) {
+
+        buscarPorId(id);
+
         rolRepository.deleteById(id);
     }
 }
