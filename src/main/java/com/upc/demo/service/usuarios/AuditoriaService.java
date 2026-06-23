@@ -19,5 +19,5 @@ public interface AuditoriaService {
 
     List<Auditoria> buscarPorFecha(LocalDateTime inicio,
                                    LocalDateTime fin);
-
+    void eliminar(Long id);
 }
