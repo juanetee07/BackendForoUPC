@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface ICategoriaServicio {
 
+    List<CategoriaNoticia> listarCategoria();
+
     CategoriaNoticia crearCategoria(CategoriaNoticia categoriaNoticia);
 
     CategoriaNoticia modificarCategoria(Long idCategoria, CategoriaNoticia categoriaModificada);
