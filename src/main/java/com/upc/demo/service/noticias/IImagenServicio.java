@@ -7,4 +7,6 @@ public interface IImagenServicio {
     ImagenNoticia agregarImagen(ImagenNoticia imagen, Long idNoticia);
 
     ImagenNoticia modificarImagen(Long idImagen, ImagenNoticia imagenActualizada);
+
+    ImagenNoticia eliminarImagen(Long idImagen);
 }

@@ -49,4 +49,12 @@ public class ImagenServicio implements IImagenServicio {
 
         return imagenRepo.save(imagenExistente);
     }
+
+    @Override
+    public ImagenNoticia eliminarImagen(Long idImagen) {
+        ImagenNoticia imagen = imagenRepo.findById(idImagen).orElseThrow(() -> new RuntimeException("Imagen no encontrada"));
+
+        imagenRepo.delete(imagen);
+        return imagen;
+    }
 }
