@@ -16,6 +16,17 @@ public class CategoriaServicio implements ICategoriaServicio{
 
 
     @Override
+    public List<CategoriaNoticia> listarCategoria() {
+        List<CategoriaNoticia> categorias = categoriaRepo.findAll();
+
+        if (categorias.isEmpty()) {
+            throw new RuntimeException("No existen categorías registradas en el sistema.");
+        }
+
+        return categorias;
+    }
+
+    @Override
     public CategoriaNoticia crearCategoria(CategoriaNoticia categoriaNoticia) {
 
         if (categoriaNoticia.getNombre() == null || categoriaNoticia.getNombre().trim().isEmpty()) {
