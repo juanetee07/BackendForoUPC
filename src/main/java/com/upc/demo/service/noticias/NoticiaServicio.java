@@ -26,6 +26,18 @@ public class NoticiaServicio implements INoticiaServicio{
     private CategoriaNoticiaRepositorio categoriaRepo;
 
     @Override
+    public List<Noticia> listarNoticias() {
+
+        List<Noticia> noticias = noticiaRepo.findAll().stream().filter(n -> n.getEstado() == EstadoNoticia.PUBLICADA).toList();
+
+        if (noticias.isEmpty()) {
+            throw new RuntimeException("No hay noticias disponibles");
+        }
+
+        return noticias;
+    }
+
+    @Override
     public Noticia crearNoticia(Noticia noticia, Long idAutor) {
 
         /*Si el titulo de esa noticia no existe o si el titulo de esa noticia esta vacia entonces no podemos guardarlo*/
