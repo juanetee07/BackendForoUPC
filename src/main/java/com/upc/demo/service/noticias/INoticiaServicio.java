@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface INoticiaServicio {
 
+    List<Noticia> listarNoticias();
+
     Noticia crearNoticia(Noticia noticia, Long idAutor);
 
     Noticia editarNoticia(Long idNoticia, Noticia noticiaActualizada, Long idAutor);
