@@ -42,4 +42,15 @@ public class NoticiaControlador {
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaNoticia);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Noticia> editarNoticia(
+            @PathVariable Long id,
+            @RequestBody Noticia noticia,
+            @RequestParam Long idAutor){
+
+        Noticia noticiaActualizada = noticiaServicio.editarNoticia(id, noticia, idAutor);
+
+        return ResponseEntity.ok(noticiaActualizada);
+    }
+
 }
