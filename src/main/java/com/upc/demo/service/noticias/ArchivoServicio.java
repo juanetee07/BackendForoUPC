@@ -1,9 +1,9 @@
 package com.upc.demo.service.noticias;
 
 import com.upc.demo.entity.noticias.ArchivoNoticia;
+import com.upc.demo.entity.noticias.ImagenNoticia;
 import com.upc.demo.entity.noticias.Noticia;
 import com.upc.demo.repository.noticias.ArchivoNoticiaRepositorio;
-import com.upc.demo.repository.noticias.ImagenNoticiaRepositorio;
 import com.upc.demo.repository.noticias.NoticiaRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,5 +38,30 @@ public class ArchivoServicio implements IArchivoServicio{
         archivoNoticia.setNoticia(noticia);
 
         return archivoRepo.save(archivoNoticia);
+    }
+
+    @Override
+    public ArchivoNoticia modificarArchivo(Long idArchivo, ArchivoNoticia archivoActualizado) {
+        ArchivoNoticia archivoExistente = archivoRepo.findById(idArchivo).orElseThrow(() -> new RuntimeException("Archivo no encontrado"));
+
+        if (archivoActualizado.getUrl() == null || archivoActualizado.getUrl().trim().isEmpty()) {
+            throw new RuntimeException("La URL del archivo es obligatorio");
+        }
+
+        if (archivoActualizado.getTipo() == null || archivoActualizado.getTipo().trim().isEmpty()) {
+            throw new RuntimeException("El tipo del archivo es obligatorio");
+        }
+
+        if (archivoActualizado.getNombre() == null || archivoActualizado.getNombre().trim().isEmpty()) {
+            throw new RuntimeException("El nombre del archivo es obligatorio");
+        }
+
+        archivoExistente.setUrl(archivoActualizado.getUrl().trim());
+
+        archivoExistente.setTipo(archivoActualizado.getTipo().trim());
+
+        archivoExistente.setNombre(archivoActualizado.getNombre().trim());
+
+        return archivoRepo.save(archivoExistente);
     }
 }
