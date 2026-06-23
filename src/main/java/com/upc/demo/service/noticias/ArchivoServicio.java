@@ -8,6 +8,8 @@ import com.upc.demo.repository.noticias.NoticiaRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ArchivoServicio implements IArchivoServicio{
 
@@ -83,5 +85,11 @@ public class ArchivoServicio implements IArchivoServicio{
             throw new RuntimeException("No se puede descargar el archivo porque la noticia aún no ha sido publicada.");
         }
         return archivo;
+    }
+
+    @Override
+    public List<ArchivoNoticia> consultarArchivosDeNoticias(Long idNoticia) {
+        noticiaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("Noticia no encontrada"));
+        return archivoRepo.findByNoticiaId(idNoticia);
     }
 }
