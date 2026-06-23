@@ -46,9 +46,11 @@ public class Usuario {
     @Column(name = "ultimo_acceso")
     private LocalDateTime ultimoAcceso;
 
+
     @ManyToOne
     @JoinColumn(name = "id_rol")
     private Rol rol;
+
 
     @OneToMany(mappedBy = "usuario")
     private List<Sesion> sesiones;

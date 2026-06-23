@@ -1,0 +1,54 @@
+package com.upc.demo.entity.noticias;
+
+import com.upc.demo.entity.usuarios.Usuario;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Table(name = "noticias")
+
+public class Noticia {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String titulo;
+
+    private String cuerpo;
+
+    private LocalDateTime fechaCreacion;
+
+    private LocalDateTime fechaPublicacion;
+
+    private LocalDateTime fechaActualizacion;
+
+    @Enumerated(EnumType.STRING)
+    private EstadoNoticia estado;
+
+    /*Muchas noticias pueden pertenecer a una categoria*/
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "categoria_id")
+    private CategoriaNoticia categoriaNoticia;
+
+    /*Un usuario puede crear muchas noticias*/
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "autor_id")
+    private Usuario autor;
+
+    /*Una noticia puede tener varios archivos*/
+    @OneToMany(mappedBy = "noticia", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ArchivoNoticia> archivos;
+
+    /*Una noticia puede tener varias imagenes*/
+    @OneToMany(mappedBy = "noticia", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ImagenNoticia> imagenes;
+}
