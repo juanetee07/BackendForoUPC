@@ -2,6 +2,7 @@ package com.upc.demo.controller.noticias;
 
 import com.upc.demo.entity.noticias.CategoriaNoticia;
 import com.upc.demo.service.noticias.ICategoriaServicio;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @RequestMapping("api/categoria-noticias")
 public class CategoriaControlador {
 
+    @Autowired
     private ICategoriaServicio categoriaServicio;
 
     @GetMapping("/todos")
@@ -46,5 +48,14 @@ public class CategoriaControlador {
         CategoriaNoticia categoriaActualizada = categoriaServicio.modificarCategoria(id, categoriaModificada);
 
         return ResponseEntity.ok(categoriaActualizada);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> eliminarCategoria(
+            @PathVariable Long id){
+
+        categoriaServicio.eliminarCategoria(id);
+
+        return ResponseEntity.ok("La categoria fue eliminada correctamente.");
     }
 }
