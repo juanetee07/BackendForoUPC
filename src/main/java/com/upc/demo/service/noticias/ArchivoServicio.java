@@ -1,0 +1,42 @@
+package com.upc.demo.service.noticias;
+
+import com.upc.demo.entity.noticias.ArchivoNoticia;
+import com.upc.demo.entity.noticias.Noticia;
+import com.upc.demo.repository.noticias.ArchivoNoticiaRepositorio;
+import com.upc.demo.repository.noticias.ImagenNoticiaRepositorio;
+import com.upc.demo.repository.noticias.NoticiaRepositorio;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ArchivoServicio implements IArchivoServicio{
+
+    @Autowired
+    private ArchivoNoticiaRepositorio archivoRepo;
+
+    @Autowired
+    private NoticiaRepositorio noticiaRepo;
+
+    @Override
+    public ArchivoNoticia agregarArchivo(ArchivoNoticia archivoNoticia, Long idNoticia) {
+
+        /*Verificar que la url no sea un valor nulo ni que este vacia*/
+        if (archivoNoticia.getUrl() == null || archivoNoticia.getUrl().trim().isEmpty()) {
+            throw new RuntimeException("La URL del archivo es obligatorio");
+        }
+
+        if (archivoNoticia.getTipo() == null || archivoNoticia.getTipo().trim().isEmpty()) {
+            throw new RuntimeException("El tipo del archivo es obligatorio");
+        }
+
+        if (archivoNoticia.getNombre() == null || archivoNoticia.getNombre().trim().isEmpty()) {
+            throw new RuntimeException("El nombre del archivo es obligatorio");
+        }
+        /*Un archivo se debe de asociar con una noticia existente*/
+        Noticia noticia = noticiaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("La noticia no existe"));
+
+        archivoNoticia.setNoticia(noticia);
+
+        return archivoRepo.save(archivoNoticia);
+    }
+}
