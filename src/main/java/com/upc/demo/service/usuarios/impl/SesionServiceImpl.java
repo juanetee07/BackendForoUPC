@@ -16,12 +16,24 @@ public class SesionServiceImpl implements SesionService {
 
     @Override
     public Sesion guardar(Sesion sesion) {
+
+        if (sesion.getUsuario() == null) {
+            throw new IllegalArgumentException("La sesión debe tener un usuario");
+        }
+
+        if (sesion.getTokenJwt() == null || sesion.getTokenJwt().isBlank()) {
+            throw new IllegalArgumentException("El token es obligatorio");
+        }
+
         return sesionRepository.save(sesion);
     }
 
     @Override
     public Sesion buscarPorId(Long id) {
-        return sesionRepository.findById(id).orElse(null);
+
+        return sesionRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Sesión no encontrada"));
     }
 
     @Override
@@ -58,6 +70,9 @@ public class SesionServiceImpl implements SesionService {
 
     @Override
     public void eliminar(Long id) {
+
+        buscarPorId(id);
+
         sesionRepository.deleteById(id);
     }
 }
