@@ -59,12 +59,34 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Usuario buscarPorEmail(String email) {
-        return usuarioRepository.findByEmail(email);
+
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("El email es obligatorio");
+        }
+
+        Usuario usuario = usuarioRepository.findByEmail(email);
+
+        if (usuario == null) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+
+        return usuario;
     }
 
     @Override
     public Usuario buscarPorDni(String dni) {
-        return usuarioRepository.findByDni(dni);
+
+        if (dni == null || dni.isBlank()) {
+            throw new IllegalArgumentException("El DNI es obligatorio");
+        }
+
+        Usuario usuario = usuarioRepository.findByDni(dni);
+
+        if (usuario == null) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+
+        return usuario;
     }
 
     @Override
