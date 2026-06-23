@@ -17,20 +17,38 @@ public class CategoriaServicio implements ICategoriaServicio{
     @Override
     public CategoriaNoticia crearCategoria(CategoriaNoticia categoriaNoticia) {
 
-        if (categoriaNoticia.getNombre() == null ||
-                categoriaNoticia.getNombre().trim().isEmpty()) {
-
-            throw new IllegalArgumentException(
-                    "El nombre de la categoría es obligatorio");
+        if (categoriaNoticia.getNombre() == null || categoriaNoticia.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre de la categoría es obligatorio");
         }
 
         Optional<CategoriaNoticia> categoriaExistente = categoriaRepo.findByNombreIgnoreCase(categoriaNoticia.getNombre());
 
         if (categoriaExistente.isPresent()) {
-            throw new RuntimeException(
-                    "Ya existe una categoría con ese nombre");
+            throw new RuntimeException("Ya existe una categoría con ese nombre");
         }
 
         return categoriaRepo.save(categoriaNoticia);
+    }
+
+    @Override
+    public CategoriaNoticia modificarCategoria(Long idCategoria, CategoriaNoticia categoriaModificada) {
+
+        CategoriaNoticia categoriaExistente = categoriaRepo.findById(idCategoria).orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+
+        if (categoriaModificada.getNombre() == null || categoriaModificada.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre de la categoría es obligatorio");
+        }
+
+        String nombre = categoriaModificada.getNombre().trim();
+
+        Optional<CategoriaNoticia> categoriaDuplicada = categoriaRepo.findByNombreIgnoreCase(nombre);
+
+        if (categoriaDuplicada.isPresent() && !categoriaDuplicada.get().getId().equals(idCategoria)) {
+            throw new IllegalArgumentException("Ya existe una categoría con ese nombre");
+        }
+
+        categoriaExistente.setNombre(nombre);
+
+        return categoriaRepo.save(categoriaExistente);
     }
 }
