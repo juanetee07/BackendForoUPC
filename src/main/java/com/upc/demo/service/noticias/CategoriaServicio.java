@@ -5,6 +5,7 @@ import com.upc.demo.repository.noticias.CategoriaNoticiaRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -51,4 +52,18 @@ public class CategoriaServicio implements ICategoriaServicio{
 
         return categoriaRepo.save(categoriaExistente);
     }
+
+    @Override
+    public List<CategoriaNoticia> consultarCategoria() {
+
+        List<CategoriaNoticia> categorias = categoriaRepo.findAll();
+
+        if (categorias.isEmpty()) {
+            throw new RuntimeException("No existen categorías registradas");
+        }
+
+        return categorias;
+    }
+
+
 }

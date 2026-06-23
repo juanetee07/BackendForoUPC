@@ -203,14 +203,11 @@ public class NoticiaServicio implements INoticiaServicio{
     public Noticia consultarNoticia(Long idNoticia) {
 
         /*Verificar que la noticia exista*/
-        Noticia noticia = noticiaRepo.findById(idNoticia)
-                .orElseThrow(() ->
-                        new RuntimeException("Noticia no encontrada"));
+        Noticia noticia = noticiaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("Noticia no encontrada"));
 
         /*Se verifica el estado*/
         if (noticia.getEstado() != EstadoNoticia.PUBLICADA) {
-            throw new RuntimeException(
-                    "La noticia no se encuentra disponible para consulta");
+            throw new RuntimeException("La noticia no se encuentra disponible para consulta");
         }
 
         return noticia;
@@ -218,8 +215,7 @@ public class NoticiaServicio implements INoticiaServicio{
 
     @Override
     public List<Noticia> buscarNoticiaPorTitulo(String titulo) {
-        return noticiaRepo.findByTituloContainingIgnoreCase(titulo)
-                .stream().filter(n -> n.getEstado() == EstadoNoticia.PUBLICADA).toList();
+        return noticiaRepo.findByTituloContainingIgnoreCase(titulo).stream().filter(n -> n.getEstado() == EstadoNoticia.PUBLICADA).toList();
     }
 
     @Override
