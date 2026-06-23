@@ -16,12 +16,40 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Usuario guardar(Usuario usuario) {
+
+        if (usuario.getNombre() == null || usuario.getNombre().isBlank()) {
+            throw new IllegalArgumentException("El nombre es obligatorio");
+        }
+
+        if (usuario.getApellido() == null || usuario.getApellido().isBlank()) {
+            throw new IllegalArgumentException("El apellido es obligatorio");
+        }
+
+        if (usuario.getEmail() == null || usuario.getEmail().isBlank()) {
+            throw new IllegalArgumentException("El email es obligatorio");
+        }
+
+        if (usuario.getDni() == null || usuario.getDni().isBlank()) {
+            throw new IllegalArgumentException("El DNI es obligatorio");
+        }
+
+        if (usuarioRepository.findByEmail(usuario.getEmail()) != null) {
+            throw new RuntimeException("Ya existe un usuario con ese email");
+        }
+
+        if (usuarioRepository.findByDni(usuario.getDni()) != null) {
+            throw new RuntimeException("Ya existe un usuario con ese DNI");
+        }
+
         return usuarioRepository.save(usuario);
     }
 
     @Override
     public Usuario buscarPorId(Long id) {
-        return usuarioRepository.findById(id).orElse(null);
+
+        return usuarioRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Usuario no encontrado"));
     }
 
     @Override
@@ -41,24 +69,24 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Usuario modificar(Long id, Usuario usuario) {
-        Usuario usuarioExistente = usuarioRepository.findById(id).orElse(null);
-        if (usuarioExistente != null) {
-            usuarioExistente.setNombre(usuario.getNombre());
-            usuarioExistente.setApellido(usuario.getApellido());
-            usuarioExistente.setEmail(usuario.getEmail());
-            usuarioExistente.setDni(usuario.getDni());
-            // No modificamos contraseña, estado ni roles aquí (por ahora)
-            return usuarioRepository.save(usuarioExistente);
-        }
-        return null;
+
+        Usuario usuarioExistente = buscarPorId(id);
+
+        usuarioExistente.setNombre(usuario.getNombre());
+        usuarioExistente.setApellido(usuario.getApellido());
+        usuarioExistente.setEmail(usuario.getEmail());
+        usuarioExistente.setDni(usuario.getDni());
+
+        return usuarioRepository.save(usuarioExistente);
     }
 
     @Override
     public void eliminar(Long id) {
-        Usuario usuarioExistente = usuarioRepository.findById(id).orElse(null);
-        if (usuarioExistente != null) {
-            usuarioExistente.setEstado("INACTIVO");
-            usuarioRepository.save(usuarioExistente);
-        }
+
+        Usuario usuarioExistente = buscarPorId(id);
+
+        usuarioExistente.setEstado("INACTIVO");
+
+        usuarioRepository.save(usuarioExistente);
     }
 }
