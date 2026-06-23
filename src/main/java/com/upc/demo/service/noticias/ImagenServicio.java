@@ -7,6 +7,8 @@ import com.upc.demo.repository.noticias.NoticiaRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class ImagenServicio implements IImagenServicio {
@@ -49,4 +51,13 @@ public class ImagenServicio implements IImagenServicio {
 
         return imagenRepo.save(imagenExistente);
     }
+
+    @Override
+    public List<ImagenNoticia> consultarImagenesPorNoticia(Long idNoticia) {
+
+        noticiaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("Noticia no encontrada"));
+
+        return imagenRepo.findByNoticiaId(idNoticia);
+    }
+    
 }
