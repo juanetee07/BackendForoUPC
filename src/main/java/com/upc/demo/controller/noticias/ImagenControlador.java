@@ -18,11 +18,11 @@ public class ImagenControlador {
     private IImagenServicio imagenServicio;
 
     @PostMapping
-    public ResponseEntity<ImagenNoticia> modificarImagen(
+    public ResponseEntity<ImagenNoticia> agregarImagen(
             @RequestParam Long idNoticia,
             @RequestBody ImagenNoticia imagenNoticia) {
 
-        ImagenNoticia imagenActualizada = imagenServicio.modificarImagen(idNoticia, imagenNoticia);
+        ImagenNoticia imagenActualizada = imagenServicio.agregarImagen(imagenNoticia, idNoticia);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(imagenActualizada);
     }
