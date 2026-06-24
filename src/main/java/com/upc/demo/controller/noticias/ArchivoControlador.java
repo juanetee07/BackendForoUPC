@@ -26,7 +26,7 @@ public class ArchivoControlador {
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoArchivo);
     }
 
-    @GetMapping("/noticia/{idNoticia}")
+    @GetMapping("/archivo/{idNoticia}")
     public ResponseEntity<List<ArchivoNoticia>> consultarArchivosDeNoticias(
             @PathVariable Long idNoticia){
 

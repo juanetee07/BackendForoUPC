@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/imagen-noticias")
 public class ImagenControlador {
@@ -23,5 +25,14 @@ public class ImagenControlador {
         ImagenNoticia imagenActualizada = imagenServicio.modificarImagen(idNoticia, imagenNoticia);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(imagenActualizada);
+    }
+
+    @GetMapping("/imagen/{idNoticia}")
+    public ResponseEntity<List<ImagenNoticia>> consultarImagenesPorNoticia(
+            @PathVariable Long idNoticia){
+
+        return ResponseEntity.ok(imagenServicio.consultarImagenesPorNoticia(idNoticia)
+
+        );
     }
 }
