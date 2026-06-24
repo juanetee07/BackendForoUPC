@@ -84,4 +84,10 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 
         return auditoriaRepository.findByFechaHoraBetween(inicio, fin);
     }
+    @Override
+    public void eliminar(Long id) {
+        Auditoria auditoria = auditoriaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Auditoría no encontrada con ID: " + id));
+        auditoriaRepository.delete(auditoria);
+    }
 }
