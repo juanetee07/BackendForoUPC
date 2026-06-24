@@ -35,4 +35,14 @@ public class ImagenControlador {
 
         );
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ImagenNoticia> modificarImagen(
+            @PathVariable Long id,
+            @RequestBody ImagenNoticia imagenActualizada){
+
+        ImagenNoticia imagenModificada = imagenServicio.modificarImagen(id, imagenActualizada);
+
+        return ResponseEntity.ok(imagenModificada);
+    }
 }
