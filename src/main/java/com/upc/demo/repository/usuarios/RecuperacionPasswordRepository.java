@@ -8,5 +8,5 @@ import java.util.List;
 @Repository
 public interface RecuperacionPasswordRepository extends JpaRepository<RecuperacionPassword, Long> {
     RecuperacionPassword findByToken(String token);
-    List<RecuperacionPassword> findByUsuarioIdUsuario(Long usuarioId);
+    RecuperacionPassword findByUsuarioIdUsuario(Long usuarioId);
 }

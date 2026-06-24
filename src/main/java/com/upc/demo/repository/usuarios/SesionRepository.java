@@ -9,4 +9,5 @@ import java.util.List;
 public interface SesionRepository extends JpaRepository<Sesion, Long> {
     List<Sesion> findByUsuarioIdUsuario(Long usuarioId);
     List<Sesion> findByActiva(Boolean activa);
+    List<Sesion> findByUsuarioIdUsuarioAndActiva(Long usuarioId, Boolean activa);
 }
