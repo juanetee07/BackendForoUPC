@@ -45,5 +45,13 @@ public class ArchivoControlador {
         return ResponseEntity.ok(archivoModificado);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> eliminarArchivo(
+            @PathVariable Long id){
+
+        archivoServicio.eliminarArchivo(id);
+
+        return ResponseEntity.ok("El archivo fue eliminado correctamente.");
+    }
 
 }
