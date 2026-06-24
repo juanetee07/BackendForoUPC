@@ -35,5 +35,15 @@ public class ArchivoControlador {
         );
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ArchivoNoticia> modificarArchivo(
+            @PathVariable Long id,
+            @RequestBody ArchivoNoticia archivoActualizado){
+
+        ArchivoNoticia archivoModificado = archivoServicio.modificarArchivo(id, archivoActualizado);
+
+        return ResponseEntity.ok(archivoModificado);
+    }
+
 
 }
