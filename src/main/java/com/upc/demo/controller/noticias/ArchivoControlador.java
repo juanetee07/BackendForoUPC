@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/archivo-noticias")
 public class ArchivoControlador {
@@ -23,4 +25,15 @@ public class ArchivoControlador {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoArchivo);
     }
+
+    @GetMapping("/noticia/{idNoticia}")
+    public ResponseEntity<List<ArchivoNoticia>> consultarArchivosDeNoticias(
+            @PathVariable Long idNoticia){
+
+        return ResponseEntity.ok(archivoServicio.consultarArchivosDeNoticias(idNoticia)
+                
+        );
+    }
+
+
 }
