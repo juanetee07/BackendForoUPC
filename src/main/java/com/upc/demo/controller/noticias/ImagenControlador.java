@@ -45,4 +45,13 @@ public class ImagenControlador {
 
         return ResponseEntity.ok(imagenModificada);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> eliminarImagen(
+            @PathVariable Long id){
+
+        imagenServicio.eliminarImagen(id);
+
+        return ResponseEntity.ok("La imagen fue eliminada correctamente.");
+    }
 }
