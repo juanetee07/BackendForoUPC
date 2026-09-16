@@ -1,6 +1,7 @@
 package com.upc.demo.controller.usuarios;
 
-import com.upc.demo.entity.usuarios.Rol;
+import com.upc.demo.dto.request.usuarios.RolRequestDTO;
+import com.upc.demo.dto.response.usuarios.RolResponseDTO;
 import com.upc.demo.service.usuarios.RolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,14 +18,25 @@ public class RolController {
     private RolService rolService;
 
     @GetMapping("/obtener/todos")
-    public ResponseEntity<List<Rol>> listarTodos() {
+    public ResponseEntity<List<RolResponseDTO>> listarTodos() {
         return ResponseEntity.ok(rolService.listar());
     }
 
     @GetMapping("/obtener/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
-            Rol rol = rolService.buscarPorId(id);
+            RolResponseDTO rol = rolService.buscarPorId(id);
+            return ResponseEntity.ok(rol);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/obtener/nombre/{nombre}")
+    public ResponseEntity<?> buscarPorNombre(@PathVariable String nombre) {
+        try {
+            RolResponseDTO rol = rolService.buscarPorNombre(nombre);
             return ResponseEntity.ok(rol);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -33,9 +45,9 @@ public class RolController {
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<?> guardar(@RequestBody Rol rol) {
+    public ResponseEntity<?> guardar(@RequestBody RolRequestDTO requestDTO) {
         try {
-            Rol nuevoRol = rolService.guardar(rol);
+            RolResponseDTO nuevoRol = rolService.guardar(requestDTO);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(nuevoRol);
         } catch (IllegalArgumentException e) {
@@ -49,12 +61,19 @@ public class RolController {
 
     @PutMapping("/actualizar/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Long id,
-                                        @RequestBody Rol rol) {
+                                        @RequestBody RolRequestDTO requestDTO) {
         try {
-            Rol rolActualizado = rolService.modificar(id, rol);
+            RolResponseDTO rolActualizado = rolService.modificar(id, requestDTO);
             return ResponseEntity.ok(rolActualizado);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            if ("Rol no encontrado".equals(e.getMessage())) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(e.getMessage());
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(e.getMessage());
         }
     }
@@ -65,7 +84,11 @@ public class RolController {
             rolService.eliminar(id);
             return ResponseEntity.ok("Rol eliminado correctamente");
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            if ("Rol no encontrado".equals(e.getMessage())) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(e.getMessage());
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(e.getMessage());
         }
     }
