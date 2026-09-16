@@ -1,5 +1,7 @@
 package com.upc.demo.service.resoluciones;
 
+import com.upc.demo.dto.request.resoluciones.CategoriaResolucionRequestDTO;
+import com.upc.demo.dto.response.resoluciones.CategoriaResolucionResponseDTO;
 import com.upc.demo.entity.resoluciones.CategoriaResolucion;
 import com.upc.demo.repository.resoluciones.CategoriaResolucionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,65 +16,87 @@ public class CategoriaResolucionServicio
     @Autowired
     private CategoriaResolucionRepository categoriaRepository;
 
+    private CategoriaResolucionResponseDTO toResponseDTO(CategoriaResolucion categoria) {
+        if (categoria == null) {
+            return null;
+        }
+        return new CategoriaResolucionResponseDTO(
+                categoria.getIdCategoria(),
+                categoria.getNombre(),
+                categoria.getDescripcion()
+        );
+    }
+
+    private CategoriaResolucion buscarEntidadPorId(Long id) {
+        return categoriaRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("No existe una categoría con ID: " + id));
+    }
+
     @Override
-    public CategoriaResolucion guardar(
-            CategoriaResolucion categoria) {
+    public CategoriaResolucionResponseDTO guardar(CategoriaResolucionRequestDTO requestDTO) {
 
-        validarCategoria(categoria);
+        validarCategoria(requestDTO);
 
-        if (categoriaRepository.existsByNombre(
-                categoria.getNombre())) {
-
+        if (categoriaRepository.existsByNombre(requestDTO.getNombre())) {
             throw new IllegalArgumentException(
                     "Ya existe una categoría con ese nombre."
             );
         }
 
-        return categoriaRepository.save(categoria);
+        CategoriaResolucion categoria = CategoriaResolucion.builder()
+                .nombre(requestDTO.getNombre())
+                .descripcion(requestDTO.getDescripcion())
+                .build();
+
+        CategoriaResolucion guardada = categoriaRepository.save(categoria);
+        return toResponseDTO(guardada);
     }
 
     @Override
-    public CategoriaResolucion buscarPorId(Long id) {
-
-        return categoriaRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "No existe una categoría con ID: " + id
-                        ));
+    public CategoriaResolucionResponseDTO buscarPorId(Long id) {
+        return toResponseDTO(buscarEntidadPorId(id));
     }
 
     @Override
-    public List<CategoriaResolucion> listarTodos() {
-
-        return categoriaRepository.findAll();
+    public List<CategoriaResolucionResponseDTO> listarTodos() {
+        return categoriaRepository.findAll().stream()
+                .map(this::toResponseDTO)
+                .toList();
     }
 
     @Override
-    public CategoriaResolucion actualizar(
+    public CategoriaResolucionResponseDTO actualizar(
             Long id,
-            CategoriaResolucion datosActualizados) {
+            CategoriaResolucionRequestDTO datosActualizados) {
 
-        CategoriaResolucion categoria = buscarPorId(id);
+        CategoriaResolucion categoria = buscarEntidadPorId(id);
 
         validarCategoria(datosActualizados);
 
-        categoria.setNombre(
-                datosActualizados.getNombre()
-        );
+        if (!categoria.getNombre().equalsIgnoreCase(datosActualizados.getNombre())
+                && categoriaRepository.existsByNombre(datosActualizados.getNombre())) {
+            throw new IllegalArgumentException(
+                    "Ya existe una categoría con ese nombre."
+            );
+        }
 
-        return categoriaRepository.save(categoria);
+        categoria.setNombre(datosActualizados.getNombre());
+        categoria.setDescripcion(datosActualizados.getDescripcion());
+
+        CategoriaResolucion actualizada = categoriaRepository.save(categoria);
+        return toResponseDTO(actualizada);
     }
 
     @Override
     public void eliminar(Long id) {
 
-        CategoriaResolucion categoria = buscarPorId(id);
+        CategoriaResolucion categoria = buscarEntidadPorId(id);
 
         categoriaRepository.delete(categoria);
     }
 
-    private void validarCategoria(
-            CategoriaResolucion categoria) {
+    private void validarCategoria(CategoriaResolucionRequestDTO categoria) {
 
         if (categoria.getNombre() == null
                 || categoria.getNombre().isBlank()) {

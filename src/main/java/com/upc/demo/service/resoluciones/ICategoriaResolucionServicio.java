@@ -1,18 +1,19 @@
 package com.upc.demo.service.resoluciones;
 
-import com.upc.demo.entity.resoluciones.CategoriaResolucion;
+import com.upc.demo.dto.request.resoluciones.CategoriaResolucionRequestDTO;
+import com.upc.demo.dto.response.resoluciones.CategoriaResolucionResponseDTO;
 
 import java.util.List;
 
 public interface ICategoriaResolucionServicio {
 
-    CategoriaResolucion guardar(CategoriaResolucion categoria);
+    CategoriaResolucionResponseDTO guardar(CategoriaResolucionRequestDTO requestDTO);
 
-    CategoriaResolucion buscarPorId(Long id);
+    CategoriaResolucionResponseDTO buscarPorId(Long id);
 
-    List<CategoriaResolucion> listarTodos();
+    List<CategoriaResolucionResponseDTO> listarTodos();
 
-    CategoriaResolucion actualizar(Long id, CategoriaResolucion categoria);
+    CategoriaResolucionResponseDTO actualizar(Long id, CategoriaResolucionRequestDTO requestDTO);
 
     void eliminar(Long id);
 }
