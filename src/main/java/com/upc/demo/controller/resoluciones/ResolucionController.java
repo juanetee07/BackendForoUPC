@@ -1,8 +1,10 @@
 package com.upc.demo.controller.resoluciones;
 
-import com.upc.demo.entity.resoluciones.Resolucion;
+import com.upc.demo.dto.request.resoluciones.ResolucionRequestDTO;
+import com.upc.demo.dto.response.resoluciones.ResolucionResponseDTO;
 import com.upc.demo.service.resoluciones.IResolucionServicio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +21,7 @@ public class ResolucionController {
      * Obtiene todas las resoluciones.
      */
     @GetMapping("/todos")
-    public ResponseEntity<List<Resolucion>> listarTodos() {
+    public ResponseEntity<List<ResolucionResponseDTO>> listarTodos() {
 
         return ResponseEntity.ok(
                 resolucionServicio.listarTodos()
@@ -30,7 +32,7 @@ public class ResolucionController {
      * Obtiene una resolución por ID.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Resolucion> buscarPorId(
+    public ResponseEntity<ResolucionResponseDTO> buscarPorId(
             @PathVariable Long id) {
 
         return ResponseEntity.ok(
@@ -42,24 +44,23 @@ public class ResolucionController {
      * Crea una nueva resolución.
      */
     @PostMapping
-    public ResponseEntity<Resolucion> guardar(
-            @RequestBody Resolucion resolucion) {
+    public ResponseEntity<ResolucionResponseDTO> guardar(
+            @RequestBody ResolucionRequestDTO requestDTO) {
 
-        return ResponseEntity.ok(
-                resolucionServicio.guardar(resolucion)
-        );
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(resolucionServicio.guardar(requestDTO));
     }
 
     /**
      * Actualiza una resolución existente.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Resolucion> actualizar(
+    public ResponseEntity<ResolucionResponseDTO> actualizar(
             @PathVariable Long id,
-            @RequestBody Resolucion resolucion) {
+            @RequestBody ResolucionRequestDTO requestDTO) {
 
         return ResponseEntity.ok(
-                resolucionServicio.actualizar(id, resolucion)
+                resolucionServicio.actualizar(id, requestDTO)
         );
     }
 
