@@ -1,8 +1,10 @@
 package com.upc.demo.controller.resoluciones;
 
-import com.upc.demo.entity.resoluciones.CategoriaResolucion;
+import com.upc.demo.dto.request.resoluciones.CategoriaResolucionRequestDTO;
+import com.upc.demo.dto.response.resoluciones.CategoriaResolucionResponseDTO;
 import com.upc.demo.service.resoluciones.ICategoriaResolucionServicio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +21,7 @@ public class CategoriaResolucionController {
      * Obtiene todas las categorías.
      */
     @GetMapping("/todos")
-    public ResponseEntity<List<CategoriaResolucion>> listarTodos() {
+    public ResponseEntity<List<CategoriaResolucionResponseDTO>> listarTodos() {
 
         return ResponseEntity.ok(
                 categoriaServicio.listarTodos()
@@ -30,7 +32,7 @@ public class CategoriaResolucionController {
      * Obtiene una categoría por ID.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<CategoriaResolucion> buscarPorId(
+    public ResponseEntity<CategoriaResolucionResponseDTO> buscarPorId(
             @PathVariable Long id) {
 
         return ResponseEntity.ok(
@@ -42,24 +44,23 @@ public class CategoriaResolucionController {
      * Crea una nueva categoría.
      */
     @PostMapping
-    public ResponseEntity<CategoriaResolucion> guardar(
-            @RequestBody CategoriaResolucion categoria) {
+    public ResponseEntity<CategoriaResolucionResponseDTO> guardar(
+            @RequestBody CategoriaResolucionRequestDTO requestDTO) {
 
-        return ResponseEntity.ok(
-                categoriaServicio.guardar(categoria)
-        );
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(categoriaServicio.guardar(requestDTO));
     }
 
     /**
      * Actualiza una categoría existente.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<CategoriaResolucion> actualizar(
+    public ResponseEntity<CategoriaResolucionResponseDTO> actualizar(
             @PathVariable Long id,
-            @RequestBody CategoriaResolucion categoria) {
+            @RequestBody CategoriaResolucionRequestDTO requestDTO) {
 
         return ResponseEntity.ok(
-                categoriaServicio.actualizar(id, categoria)
+                categoriaServicio.actualizar(id, requestDTO)
         );
     }
 
