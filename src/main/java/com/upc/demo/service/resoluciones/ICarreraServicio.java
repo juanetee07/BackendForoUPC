@@ -1,18 +1,19 @@
 package com.upc.demo.service.resoluciones;
 
-import com.upc.demo.entity.resoluciones.Carrera;
+import com.upc.demo.dto.request.resoluciones.CarreraRequestDTO;
+import com.upc.demo.dto.response.resoluciones.CarreraResponseDTO;
 
 import java.util.List;
 
 public interface ICarreraServicio {
 
-    Carrera guardar(Carrera carrera);
+    CarreraResponseDTO guardar(CarreraRequestDTO requestDTO);
 
-    Carrera buscarPorId(Long id);
+    CarreraResponseDTO buscarPorId(Long id);
 
-    List<Carrera> listarTodos();
+    List<CarreraResponseDTO> listarTodos();
 
-    Carrera actualizar(Long id, Carrera carrera);
+    CarreraResponseDTO actualizar(Long id, CarreraRequestDTO requestDTO);
 
     void eliminar(Long id);
 }
