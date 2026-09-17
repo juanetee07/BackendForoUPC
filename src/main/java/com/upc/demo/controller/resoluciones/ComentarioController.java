@@ -1,8 +1,10 @@
 package com.upc.demo.controller.resoluciones;
 
-import com.upc.demo.entity.resoluciones.Comentario;
+import com.upc.demo.dto.request.resoluciones.ComentarioRequestDTO;
+import com.upc.demo.dto.response.resoluciones.ComentarioResponseDTO;
 import com.upc.demo.service.resoluciones.IComentarioServicio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +21,7 @@ public class ComentarioController {
      * Obtiene todos los comentarios.
      */
     @GetMapping("/todos")
-    public ResponseEntity<List<Comentario>> listarTodos() {
+    public ResponseEntity<List<ComentarioResponseDTO>> listarTodos() {
 
         return ResponseEntity.ok(
                 comentarioServicio.listarTodos()
@@ -30,7 +32,7 @@ public class ComentarioController {
      * Obtiene un comentario por ID.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Comentario> buscarPorId(
+    public ResponseEntity<ComentarioResponseDTO> buscarPorId(
             @PathVariable Long id) {
 
         return ResponseEntity.ok(
@@ -42,24 +44,23 @@ public class ComentarioController {
      * Crea un nuevo comentario.
      */
     @PostMapping
-    public ResponseEntity<Comentario> guardar(
-            @RequestBody Comentario comentario) {
+    public ResponseEntity<ComentarioResponseDTO> guardar(
+            @RequestBody ComentarioRequestDTO requestDTO) {
 
-        return ResponseEntity.ok(
-                comentarioServicio.guardar(comentario)
-        );
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(comentarioServicio.guardar(requestDTO));
     }
 
     /**
      * Actualiza un comentario existente.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Comentario> actualizar(
+    public ResponseEntity<ComentarioResponseDTO> actualizar(
             @PathVariable Long id,
-            @RequestBody Comentario comentario) {
+            @RequestBody ComentarioRequestDTO requestDTO) {
 
         return ResponseEntity.ok(
-                comentarioServicio.actualizar(id, comentario)
+                comentarioServicio.actualizar(id, requestDTO)
         );
     }
 
