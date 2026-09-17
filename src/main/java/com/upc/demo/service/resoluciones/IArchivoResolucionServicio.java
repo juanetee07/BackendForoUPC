@@ -1,18 +1,19 @@
 package com.upc.demo.service.resoluciones;
 
-import com.upc.demo.entity.resoluciones.ArchivoResolucion;
+import com.upc.demo.dto.request.resoluciones.ArchivoResolucionRequestDTO;
+import com.upc.demo.dto.response.resoluciones.ArchivoResolucionResponseDTO;
 
 import java.util.List;
 
 public interface IArchivoResolucionServicio {
 
-    ArchivoResolucion guardar(ArchivoResolucion archivo);
+    ArchivoResolucionResponseDTO guardar(ArchivoResolucionRequestDTO requestDTO);
 
-    ArchivoResolucion buscarPorId(Long id);
+    ArchivoResolucionResponseDTO buscarPorId(Long id);
 
-    List<ArchivoResolucion> listarTodos();
+    List<ArchivoResolucionResponseDTO> listarTodos();
 
-    ArchivoResolucion actualizar(Long id, ArchivoResolucion archivo);
+    ArchivoResolucionResponseDTO actualizar(Long id, ArchivoResolucionRequestDTO requestDTO);
 
     void eliminar(Long id);
 }
