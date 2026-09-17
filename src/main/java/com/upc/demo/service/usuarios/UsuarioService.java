@@ -1,23 +1,23 @@
 package com.upc.demo.service.usuarios;
 
-import com.upc.demo.entity.usuarios.Usuario;
+import com.upc.demo.dto.request.usuarios.UsuarioRequestDTO;
+import com.upc.demo.dto.response.usuarios.UsuarioResponseDTO;
 
 import java.util.List;
 
 public interface UsuarioService {
 
-    Usuario guardar(Usuario usuario);
+    UsuarioResponseDTO guardar(UsuarioRequestDTO requestDTO);
 
-    Usuario buscarPorId(Long id);
+    UsuarioResponseDTO buscarPorId(Long id);
 
-    List<Usuario> listar();
+    List<UsuarioResponseDTO> listar();
 
-    Usuario buscarPorEmail(String email);
+    UsuarioResponseDTO buscarPorEmail(String email);
 
-    Usuario buscarPorDni(String dni);
+    UsuarioResponseDTO buscarPorDni(String dni);
 
-    Usuario modificar(Long id, Usuario usuario);
+    UsuarioResponseDTO modificar(Long id, UsuarioRequestDTO requestDTO);
 
     void eliminar(Long id);
-
 }

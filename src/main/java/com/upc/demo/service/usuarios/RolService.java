@@ -1,17 +1,21 @@
 package com.upc.demo.service.usuarios;
 
-import com.upc.demo.entity.usuarios.Rol;
+import com.upc.demo.dto.request.usuarios.RolRequestDTO;
+import com.upc.demo.dto.response.usuarios.RolResponseDTO;
+
 import java.util.List;
 
 public interface RolService {
 
-    Rol guardar(Rol rol);
+    RolResponseDTO guardar(RolRequestDTO requestDTO);
 
-    Rol buscarPorId(Long id);
+    RolResponseDTO buscarPorId(Long id);
 
-    List<Rol> listar();
+    List<RolResponseDTO> listar();
 
-    Rol modificar(Long id, Rol rol);
+    RolResponseDTO buscarPorNombre(String nombre);
+
+    RolResponseDTO modificar(Long id, RolRequestDTO requestDTO);
 
     void eliminar(Long id);
 }

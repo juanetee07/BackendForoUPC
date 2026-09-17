@@ -1,21 +1,21 @@
 package com.upc.demo.service.usuarios;
 
-import com.upc.demo.entity.usuarios.Sesion;
+import com.upc.demo.dto.request.usuarios.SesionRequestDTO;
+import com.upc.demo.dto.response.usuarios.SesionResponseDTO;
+
 import java.util.List;
 
 public interface SesionService {
 
-    Sesion guardar(Sesion sesion);
+    SesionResponseDTO guardar(SesionRequestDTO requestDTO);
 
-    Sesion buscarPorId(Long id);
+    SesionResponseDTO buscarPorId(Long id);
 
-    List<Sesion> listar();
+    List<SesionResponseDTO> listar();
 
-    List<Sesion> buscarPorUsuario(Long usuarioId);
+    List<SesionResponseDTO> listarPorUsuario(Long usuarioId);
 
-    List<Sesion> buscarPorActiva(Boolean activa);
-
-    Sesion modificar(Long id, Sesion sesion);
+    List<SesionResponseDTO> listarActivas();
 
     void eliminar(Long id);
 }
