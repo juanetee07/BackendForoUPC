@@ -12,15 +12,17 @@ import lombok.Setter;
 @Getter
 @Setter
 
-public class ImagenNoticiaRequest {
+public class ArchivoNoticiaRequest {
+
+    @NotBlank(message = "El nombre es obligatorio.")
+    private String nombre;
 
     @NotBlank(message = "La URL es obligatoria")
     private String url;
 
-    @NotBlank(message = "El epígrafe es obligatorio")
-    private String epigrafe;
+    @NotBlank(message = "El tipo es obligatoria")
+    private String tipo;
 
     @NotNull(message = "La noticia es obligatoria.")
     private Long noticiaId;
-
 }
