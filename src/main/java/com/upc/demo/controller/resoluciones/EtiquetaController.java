@@ -1,8 +1,10 @@
 package com.upc.demo.controller.resoluciones;
 
-import com.upc.demo.entity.resoluciones.Etiqueta;
+import com.upc.demo.dto.request.resoluciones.EtiquetaRequestDTO;
+import com.upc.demo.dto.response.resoluciones.EtiquetaResponseDTO;
 import com.upc.demo.service.resoluciones.IEtiquetaServicio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +21,7 @@ public class EtiquetaController {
      * Obtiene todas las etiquetas.
      */
     @GetMapping("/todos")
-    public ResponseEntity<List<Etiqueta>> listarTodos() {
+    public ResponseEntity<List<EtiquetaResponseDTO>> listarTodos() {
 
         return ResponseEntity.ok(
                 etiquetaServicio.listarTodos()
@@ -30,7 +32,7 @@ public class EtiquetaController {
      * Obtiene una etiqueta por ID.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Etiqueta> buscarPorId(
+    public ResponseEntity<EtiquetaResponseDTO> buscarPorId(
             @PathVariable Long id) {
 
         return ResponseEntity.ok(
@@ -42,24 +44,23 @@ public class EtiquetaController {
      * Crea una nueva etiqueta.
      */
     @PostMapping
-    public ResponseEntity<Etiqueta> guardar(
-            @RequestBody Etiqueta etiqueta) {
+    public ResponseEntity<EtiquetaResponseDTO> guardar(
+            @RequestBody EtiquetaRequestDTO requestDTO) {
 
-        return ResponseEntity.ok(
-                etiquetaServicio.guardar(etiqueta)
-        );
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(etiquetaServicio.guardar(requestDTO));
     }
 
     /**
      * Actualiza una etiqueta existente.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Etiqueta> actualizar(
+    public ResponseEntity<EtiquetaResponseDTO> actualizar(
             @PathVariable Long id,
-            @RequestBody Etiqueta etiqueta) {
+            @RequestBody EtiquetaRequestDTO requestDTO) {
 
         return ResponseEntity.ok(
-                etiquetaServicio.actualizar(id, etiqueta)
+                etiquetaServicio.actualizar(id, requestDTO)
         );
     }
 
