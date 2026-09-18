@@ -2,7 +2,7 @@ package com.upc.demo.dto.response.noticias;
 
 
 import com.upc.demo.entity.noticias.EstadoNoticia;
-import com.upc.demo.dto.response.usuario.UsuarioResponseDTO;
+import com.upc.demo.dto.response.usuarios.UsuarioResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

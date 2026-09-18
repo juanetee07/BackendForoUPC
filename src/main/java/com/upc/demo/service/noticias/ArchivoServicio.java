@@ -1,5 +1,7 @@
 package com.upc.demo.service.noticias;
 
+import com.upc.demo.dto.request.noticias.ArchivoNoticiaRequest;
+import com.upc.demo.dto.response.noticias.ArchivoNoticiaResponse;
 import com.upc.demo.entity.noticias.ArchivoNoticia;
 import com.upc.demo.entity.noticias.EstadoNoticia;
 import com.upc.demo.entity.noticias.Noticia;
@@ -20,60 +22,107 @@ public class ArchivoServicio implements IArchivoServicio{
     private NoticiaRepositorio noticiaRepo;
 
     @Override
-    public ArchivoNoticia agregarArchivo(ArchivoNoticia archivoNoticia, Long idNoticia) {
+    public ArchivoNoticiaResponse agregarArchivo(
+            ArchivoNoticiaRequest archivoNoticiaRequest,
+            Long idNoticia) {
 
-        /*Verificar que la url no sea un valor nulo ni que este vacia*/
-        if (archivoNoticia.getUrl() == null || archivoNoticia.getUrl().trim().isEmpty()) {
-            throw new RuntimeException("La URL del archivo es obligatorio");
+        // Verificar que la URL no sea nula ni esté vacía
+        if (archivoNoticiaRequest.getUrl() == null ||
+                archivoNoticiaRequest.getUrl().trim().isEmpty()) {
+
+            throw new RuntimeException("La URL del archivo es obligatoria");
         }
 
-        if (archivoNoticia.getTipo() == null || archivoNoticia.getTipo().trim().isEmpty()) {
+        // Verificar que el tipo no sea nulo ni esté vacío
+        if (archivoNoticiaRequest.getTipo() == null ||
+                archivoNoticiaRequest.getTipo().trim().isEmpty()) {
+
             throw new RuntimeException("El tipo del archivo es obligatorio");
         }
 
-        if (archivoNoticia.getNombre() == null || archivoNoticia.getNombre().trim().isEmpty()) {
+        // Verificar que el nombre no sea nulo ni esté vacío
+        if (archivoNoticiaRequest.getNombre() == null ||
+                archivoNoticiaRequest.getNombre().trim().isEmpty()) {
+
             throw new RuntimeException("El nombre del archivo es obligatorio");
         }
-        /*Un archivo se debe de asociar con una noticia existente*/
-        Noticia noticia = noticiaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("La noticia no existe"));
 
+        // Verificar que la noticia exista
+        Noticia noticia = noticiaRepo.findById(idNoticia)
+                .orElseThrow(() ->
+                        new RuntimeException("La noticia no existe"));
+
+        // Crear la entidad
+        ArchivoNoticia archivoNoticia = new ArchivoNoticia();
+
+        archivoNoticia.setNombre(archivoNoticiaRequest.getNombre().trim());
+        archivoNoticia.setUrl(archivoNoticiaRequest.getUrl().trim());
+        archivoNoticia.setTipo(archivoNoticiaRequest.getTipo().trim());
+
+        // Asociar el archivo con la noticia
         archivoNoticia.setNoticia(noticia);
 
-        return archivoRepo.save(archivoNoticia);
+        // Guardar
+        ArchivoNoticia archivoGuardado = archivoRepo.save(archivoNoticia);
+
+        // Crear Response
+        ArchivoNoticiaResponse response = new ArchivoNoticiaResponse();
+
+        response.setId(archivoGuardado.getId());
+        response.setNombre(archivoGuardado.getNombre());
+        response.setUrl(archivoGuardado.getUrl());
+        response.setTipo(archivoGuardado.getTipo());
+
+        return response;
     }
 
     @Override
-    public ArchivoNoticia modificarArchivo(Long idArchivo, ArchivoNoticia archivoActualizado) {
-        ArchivoNoticia archivoExistente = archivoRepo.findById(idArchivo).orElseThrow(() -> new RuntimeException("Archivo no encontrado"));
+    public ArchivoNoticiaResponse modificarArchivo(
+            Long idArchivo,
+            ArchivoNoticiaRequest archivoNoticiaRequest) {
 
-        if (archivoActualizado.getUrl() == null || archivoActualizado.getUrl().trim().isEmpty()) {
-            throw new RuntimeException("La URL del archivo es obligatorio");
+        ArchivoNoticia archivoExistente = archivoRepo.findById(idArchivo)
+                .orElseThrow(() -> new RuntimeException("Archivo no encontrado"));
+
+        if (archivoNoticiaRequest.getUrl() == null ||
+                archivoNoticiaRequest.getUrl().trim().isEmpty()) {
+
+            throw new RuntimeException("La URL del archivo es obligatoria");
         }
 
-        if (archivoActualizado.getTipo() == null || archivoActualizado.getTipo().trim().isEmpty()) {
+        if (archivoNoticiaRequest.getTipo() == null ||
+                archivoNoticiaRequest.getTipo().trim().isEmpty()) {
+
             throw new RuntimeException("El tipo del archivo es obligatorio");
         }
 
-        if (archivoActualizado.getNombre() == null || archivoActualizado.getNombre().trim().isEmpty()) {
+        if (archivoNoticiaRequest.getNombre() == null ||
+                archivoNoticiaRequest.getNombre().trim().isEmpty()) {
+
             throw new RuntimeException("El nombre del archivo es obligatorio");
         }
 
-        archivoExistente.setUrl(archivoActualizado.getUrl().trim());
+        archivoExistente.setNombre(archivoNoticiaRequest.getNombre().trim());
+        archivoExistente.setUrl(archivoNoticiaRequest.getUrl().trim());
+        archivoExistente.setTipo(archivoNoticiaRequest.getTipo().trim());
 
-        archivoExistente.setTipo(archivoActualizado.getTipo().trim());
+        ArchivoNoticia archivoGuardado = archivoRepo.save(archivoExistente);
 
-        archivoExistente.setNombre(archivoActualizado.getNombre().trim());
+        ArchivoNoticiaResponse response = new ArchivoNoticiaResponse();
+        response.setId(archivoGuardado.getId());
+        response.setNombre(archivoGuardado.getNombre());
+        response.setUrl(archivoGuardado.getUrl());
+        response.setTipo(archivoGuardado.getTipo());
 
-        return archivoRepo.save(archivoExistente);
+        return response;
     }
 
     @Override
-    public ArchivoNoticia eliminarArchivo(Long idArchivo) {
+    public void eliminarArchivo(Long idArchivo) {
 
         ArchivoNoticia archivo = archivoRepo.findById(idArchivo).orElseThrow(() -> new RuntimeException("Archivo no encontrado"));
         archivoRepo.delete(archivo);
 
-        return archivo;
     }
 
     @Override
@@ -88,8 +137,24 @@ public class ArchivoServicio implements IArchivoServicio{
     }
 
     @Override
-    public List<ArchivoNoticia> consultarArchivosDeNoticias(Long idNoticia) {
-        noticiaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("Noticia no encontrada"));
-        return archivoRepo.findByNoticiaId(idNoticia);
+    public List<ArchivoNoticiaResponse> consultarArchivosDeNoticias(Long idNoticia) {
+
+        noticiaRepo.findById(idNoticia)
+                .orElseThrow(() -> new RuntimeException("Noticia no encontrada"));
+
+        List<ArchivoNoticia> archivos = archivoRepo.findByNoticiaId(idNoticia);
+
+        return archivos.stream()
+                .map(archivo -> {
+                    ArchivoNoticiaResponse response = new ArchivoNoticiaResponse();
+
+                    response.setId(archivo.getId());
+                    response.setNombre(archivo.getNombre());
+                    response.setUrl(archivo.getUrl());
+                    response.setTipo(archivo.getTipo());
+
+                    return response;
+                })
+                .toList();
     }
 }

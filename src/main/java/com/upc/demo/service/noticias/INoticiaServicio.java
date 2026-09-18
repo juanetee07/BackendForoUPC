@@ -1,5 +1,7 @@
 package com.upc.demo.service.noticias;
 
+import com.upc.demo.dto.request.noticias.NoticiaRequest;
+import com.upc.demo.dto.response.noticias.NoticiaResponse;
 import com.upc.demo.entity.noticias.EstadoNoticia;
 import com.upc.demo.entity.noticias.Noticia;
 
@@ -8,17 +10,17 @@ import java.util.List;
 
 public interface INoticiaServicio {
 
-    List<Noticia> listarNoticias();
+    List<NoticiaResponse> listarNoticias();
 
-    Noticia crearNoticia(Noticia noticia, Long idAutor);
+    NoticiaResponse crearNoticia(NoticiaRequest noticiaRequest, Long usuarioId);
 
-    Noticia editarNoticia(Long idNoticia, Noticia noticiaActualizada, Long idAutor);
+    NoticiaResponse editarNoticia(Long idNoticia, NoticiaRequest noticiaActualizada, Long idAutor);
 
     Noticia publicarNoticia(Long idNoticia, Long idAutor);
 
     Noticia cambiarEstado(Long idNoticia, EstadoNoticia nuevoEstado, Long idAutor);
 
-    Noticia consultarNoticia(Long idNoticia);
+    NoticiaResponse consultarNoticia(Long idNoticia);
 
     List<Noticia> buscarNoticiaPorTitulo(String titulo);
 
@@ -26,5 +28,5 @@ public interface INoticiaServicio {
 
     List<Noticia> buscarNoticiaPorFecha(LocalDateTime fechaInicio, LocalDateTime fechaFin);
 
-    Noticia eliminarNoticia(Long idNoticia);
+    void eliminarNoticia(Long idNoticia);
 }

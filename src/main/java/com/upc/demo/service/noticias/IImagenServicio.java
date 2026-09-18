@@ -1,16 +1,18 @@
 package com.upc.demo.service.noticias;
 
+import com.upc.demo.dto.request.noticias.ImagenNoticiaRequest;
+import com.upc.demo.dto.response.noticias.ImagenNoticiaResponse;
 import com.upc.demo.entity.noticias.ImagenNoticia;
 
 import java.util.List;
 
 public interface IImagenServicio {
 
-    ImagenNoticia agregarImagen(ImagenNoticia imagen, Long idNoticia);
+    ImagenNoticiaResponse agregarImagen(ImagenNoticiaRequest imagenNoticiaRequest, Long idNoticia);
 
-    ImagenNoticia modificarImagen(Long idImagen, ImagenNoticia imagenActualizada);
+    ImagenNoticiaResponse modificarImagen(Long idImagen, ImagenNoticiaRequest imagenNoticiaRequest);
 
-    ImagenNoticia eliminarImagen(Long idImagen);
+    void eliminarImagen(Long idImagen);
 
-    List<ImagenNoticia> consultarImagenesPorNoticia(Long idNoticia);
+    List<ImagenNoticiaResponse> consultarImagenesPorNoticia(Long idNoticia);
 }

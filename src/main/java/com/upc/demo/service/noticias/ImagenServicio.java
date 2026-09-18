@@ -1,5 +1,7 @@
 package com.upc.demo.service.noticias;
 
+import com.upc.demo.dto.request.noticias.ImagenNoticiaRequest;
+import com.upc.demo.dto.response.noticias.ImagenNoticiaResponse;
 import com.upc.demo.entity.noticias.ImagenNoticia;
 import com.upc.demo.entity.noticias.Noticia;
 import com.upc.demo.repository.noticias.ImagenNoticiaRepositorio;
@@ -21,51 +23,96 @@ public class ImagenServicio implements IImagenServicio {
 
 
     @Override
-    public ImagenNoticia agregarImagen(ImagenNoticia imagen, Long idNoticia) {
+    public ImagenNoticiaResponse agregarImagen(
+            ImagenNoticiaRequest imagenNoticiaRequest,
+            Long idNoticia) {
 
-        /*Verificar que la url no sea un valor nulo ni que este vacia*/
-        if (imagen.getUrl() == null || imagen.getUrl().trim().isEmpty()) {
+        /* Verificar que la URL no sea nula ni esté vacía */
+        if (imagenNoticiaRequest.getUrl() == null ||
+                imagenNoticiaRequest.getUrl().trim().isEmpty()) {
+
             throw new RuntimeException("La URL de la imagen es obligatoria");
         }
 
-        /*Una imagen se debe de asociar con una noticia existente*/
-        Noticia noticia = noticiaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("La noticia no existe"));
+        /* Buscar la noticia */
+        Noticia noticia = noticiaRepo.findById(idNoticia)
+                .orElseThrow(() ->
+                        new RuntimeException("La noticia no existe"));
 
+        /* Crear la entidad */
+        ImagenNoticia imagen = new ImagenNoticia();
+
+        imagen.setUrl(imagenNoticiaRequest.getUrl());
+        imagen.setEpigrafe(imagenNoticiaRequest.getEpigrafe());
         imagen.setNoticia(noticia);
 
-        return imagenRepo.save(imagen);
+        /* Guardar */
+        ImagenNoticia imagenGuardada = imagenRepo.save(imagen);
+
+        /* Convertir a Response */
+        ImagenNoticiaResponse response = new ImagenNoticiaResponse();
+
+        response.setId(imagenGuardada.getId());
+        response.setUrl(imagenGuardada.getUrl());
+        response.setEpigrafe(imagenGuardada.getEpigrafe());
+
+        return response;
     }
 
     @Override
-    public ImagenNoticia modificarImagen(Long idImagen, ImagenNoticia imagenActualizada) {
+    public ImagenNoticiaResponse modificarImagen(
+            Long idImagen,
+            ImagenNoticiaRequest imagenNoticiaRequest) {
 
-        ImagenNoticia imagenExistente = imagenRepo.findById(idImagen).orElseThrow(() -> new RuntimeException("Imagen no encontrada"));
+        ImagenNoticia imagenExistente = imagenRepo.findById(idImagen)
+                .orElseThrow(() -> new RuntimeException("Imagen no encontrada"));
 
-        if (imagenActualizada.getUrl() == null || imagenActualizada.getUrl().trim().isEmpty()) {
+        if (imagenNoticiaRequest.getUrl() == null ||
+                imagenNoticiaRequest.getUrl().trim().isEmpty()) {
+
             throw new RuntimeException("La URL de la imagen es obligatoria");
         }
 
-        imagenExistente.setUrl(imagenActualizada.getUrl().trim());
+        imagenExistente.setUrl(imagenNoticiaRequest.getUrl().trim());
+        imagenExistente.setEpigrafe(imagenNoticiaRequest.getEpigrafe());
 
-        imagenExistente.setEpigrafe(imagenActualizada.getEpigrafe());
+        ImagenNoticia imagenActualizada = imagenRepo.save(imagenExistente);
 
-        return imagenRepo.save(imagenExistente);
+        ImagenNoticiaResponse response = new ImagenNoticiaResponse();
+
+        response.setId(imagenActualizada.getId());
+        response.setUrl(imagenActualizada.getUrl());
+        response.setEpigrafe(imagenActualizada.getEpigrafe());
+
+        return response;
     }
 
     @Override
-    public ImagenNoticia eliminarImagen(Long idImagen) {
+    public void eliminarImagen(Long idImagen) {
+
         ImagenNoticia imagen = imagenRepo.findById(idImagen).orElseThrow(() -> new RuntimeException("Imagen no encontrada"));
 
         imagenRepo.delete(imagen);
-        return imagen;
     }
 
     @Override
-    public List<ImagenNoticia> consultarImagenesPorNoticia(Long idNoticia) {
+    public List<ImagenNoticiaResponse> consultarImagenesPorNoticia(Long idNoticia) {
 
-        noticiaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("Noticia no encontrada"));
+        noticiaRepo.findById(idNoticia)
+                .orElseThrow(() -> new RuntimeException("Noticia no encontrada"));
 
-        return imagenRepo.findByNoticiaId(idNoticia);
+        return imagenRepo.findByNoticiaId(idNoticia)
+                .stream()
+                .map(imagen -> {
+                    ImagenNoticiaResponse response = new ImagenNoticiaResponse();
+
+                    response.setId(imagen.getId());
+                    response.setUrl(imagen.getUrl());
+                    response.setEpigrafe(imagen.getEpigrafe());
+
+                    return response;
+                })
+                .toList();
     }
 
 }

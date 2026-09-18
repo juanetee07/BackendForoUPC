@@ -1,5 +1,7 @@
 package com.upc.demo.service.noticias;
 
+import com.upc.demo.dto.request.noticias.CategoriaNoticiaRequest;
+import com.upc.demo.dto.response.noticias.CategoriaNoticiaResponse;
 import com.upc.demo.entity.noticias.CategoriaNoticia;
 import com.upc.demo.repository.noticias.CategoriaNoticiaRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,68 +18,117 @@ public class CategoriaServicio implements ICategoriaServicio{
 
 
     @Override
-    public List<CategoriaNoticia> listarCategoria() {
+    public List<CategoriaNoticiaResponse> listarCategoria() {
+
         List<CategoriaNoticia> categorias = categoriaRepo.findAll();
 
         if (categorias.isEmpty()) {
-            throw new RuntimeException("No existen categorías registradas en el sistema.");
+            throw new RuntimeException(
+                    "No existen categorías registradas en el sistema."
+            );
         }
 
-        return categorias;
+        return categorias.stream()
+                .map(categoria -> {
+                    CategoriaNoticiaResponse response =
+                            new CategoriaNoticiaResponse();
+
+                    response.setId(categoria.getId());
+                    response.setNombre(categoria.getNombre());
+
+                    return response;
+                })
+                .toList();
     }
 
     @Override
-    public CategoriaNoticia crearCategoria(CategoriaNoticia categoriaNoticia) {
+    public CategoriaNoticiaResponse crearCategoria(CategoriaNoticiaRequest categoriaNoticiaRequest) {
 
-        if (categoriaNoticia.getNombre() == null || categoriaNoticia.getNombre().trim().isEmpty()) {
+        if (categoriaNoticiaRequest.getNombre() == null ||
+                categoriaNoticiaRequest.getNombre().trim().isEmpty()) {
+
             throw new IllegalArgumentException("El nombre de la categoría es obligatorio");
         }
 
-        Optional<CategoriaNoticia> categoriaExistente = categoriaRepo.findByNombreIgnoreCase(categoriaNoticia.getNombre());
+        Optional<CategoriaNoticia> categoriaExistente =
+                categoriaRepo.findByNombreIgnoreCase(categoriaNoticiaRequest.getNombre());
 
         if (categoriaExistente.isPresent()) {
             throw new RuntimeException("Ya existe una categoría con ese nombre");
         }
 
-        return categoriaRepo.save(categoriaNoticia);
+        CategoriaNoticia categoria = new CategoriaNoticia();
+        categoria.setNombre(categoriaNoticiaRequest.getNombre());
+
+        CategoriaNoticia categoriaGuardada = categoriaRepo.save(categoria);
+
+        CategoriaNoticiaResponse response = new CategoriaNoticiaResponse();
+        response.setId(categoriaGuardada.getId());
+        response.setNombre(categoriaGuardada.getNombre());
+
+        return response;
     }
 
     @Override
-    public CategoriaNoticia modificarCategoria(Long idCategoria, CategoriaNoticia categoriaModificada) {
+    public CategoriaNoticiaResponse modificarCategoria(
+            Long idCategoria,
+            CategoriaNoticiaRequest categoriaNoticiaRequest) {
 
-        CategoriaNoticia categoriaExistente = categoriaRepo.findById(idCategoria).orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+        CategoriaNoticia categoriaExistente = categoriaRepo.findById(idCategoria)
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
-        if (categoriaModificada.getNombre() == null || categoriaModificada.getNombre().trim().isEmpty()) {
+        if (categoriaNoticiaRequest.getNombre() == null ||
+                categoriaNoticiaRequest.getNombre().trim().isEmpty()) {
+
             throw new IllegalArgumentException("El nombre de la categoría es obligatorio");
         }
 
-        String nombre = categoriaModificada.getNombre().trim();
+        String nombre = categoriaNoticiaRequest.getNombre().trim();
 
-        Optional<CategoriaNoticia> categoriaDuplicada = categoriaRepo.findByNombreIgnoreCase(nombre);
+        Optional<CategoriaNoticia> categoriaDuplicada =
+                categoriaRepo.findByNombreIgnoreCase(nombre);
 
-        if (categoriaDuplicada.isPresent() && !categoriaDuplicada.get().getId().equals(idCategoria)) {
+        if (categoriaDuplicada.isPresent() &&
+                !categoriaDuplicada.get().getId().equals(idCategoria)) {
+
             throw new IllegalArgumentException("Ya existe una categoría con ese nombre");
         }
 
         categoriaExistente.setNombre(nombre);
 
-        return categoriaRepo.save(categoriaExistente);
+        CategoriaNoticia categoriaGuardada = categoriaRepo.save(categoriaExistente);
+
+        CategoriaNoticiaResponse response = new CategoriaNoticiaResponse();
+        response.setId(categoriaGuardada.getId());
+        response.setNombre(categoriaGuardada.getNombre());
+
+        return response;
     }
 
     @Override
-    public CategoriaNoticia consultarCategoria(Long idCategoria) {
+    public CategoriaNoticiaResponse consultarCategoria(Long idCategoria) {
 
-        return categoriaRepo.findById(idCategoria).orElseThrow(() -> new RuntimeException("No existe una categoría con el ID: " + idCategoria));
+        CategoriaNoticia categoria = categoriaRepo.findById(idCategoria)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "No existe una categoría con el ID: " + idCategoria
+                        )
+                );
 
+        CategoriaNoticiaResponse response = new CategoriaNoticiaResponse();
+        response.setId(categoria.getId());
+        response.setNombre(categoria.getNombre());
+
+        return response;
     }
 
     @Override
-    public CategoriaNoticia eliminarCategoria(Long idNoticia) {
+    public void eliminarCategoria(Long idNoticia) {
 
         CategoriaNoticia categoriaNoticia = categoriaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("No existe una categoria con el ID: " + idNoticia));
+
         categoriaRepo.delete(categoriaNoticia);
-        
-        return categoriaNoticia;
+
     }
 
 

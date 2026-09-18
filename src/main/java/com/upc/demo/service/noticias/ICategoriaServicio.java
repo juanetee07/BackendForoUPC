@@ -1,18 +1,20 @@
 package com.upc.demo.service.noticias;
 
+import com.upc.demo.dto.request.noticias.CategoriaNoticiaRequest;
+import com.upc.demo.dto.response.noticias.CategoriaNoticiaResponse;
 import com.upc.demo.entity.noticias.CategoriaNoticia;
 
 import java.util.List;
 
 public interface ICategoriaServicio {
 
-    List<CategoriaNoticia> listarCategoria();
+    List<CategoriaNoticiaResponse> listarCategoria();
 
-    CategoriaNoticia crearCategoria(CategoriaNoticia categoriaNoticia);
+    CategoriaNoticiaResponse crearCategoria(CategoriaNoticiaRequest categoriaNoticiaRequest);
 
-    CategoriaNoticia modificarCategoria(Long idCategoria, CategoriaNoticia categoriaModificada);
+    CategoriaNoticiaResponse modificarCategoria(Long idCategoria, CategoriaNoticiaRequest categoriaNoticiaRequest);
 
-    CategoriaNoticia consultarCategoria(Long idCategoria);
+    CategoriaNoticiaResponse consultarCategoria(Long idCategoria);
 
-    CategoriaNoticia eliminarCategoria(Long idNoticia);
+    void eliminarCategoria(Long idNoticia);
 }

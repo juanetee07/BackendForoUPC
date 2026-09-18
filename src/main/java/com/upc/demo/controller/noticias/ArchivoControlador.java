@@ -1,7 +1,11 @@
 package com.upc.demo.controller.noticias;
 
+import com.upc.demo.dto.request.noticias.ArchivoNoticiaRequest;
+import com.upc.demo.dto.response.noticias.ArchivoNoticiaResponse;
 import com.upc.demo.entity.noticias.ArchivoNoticia;
+import com.upc.demo.repository.noticias.ArchivoNoticiaRepositorio;
 import com.upc.demo.service.noticias.IArchivoServicio;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,17 +21,17 @@ public class ArchivoControlador {
     private IArchivoServicio archivoServicio;
 
     @PostMapping
-    public ResponseEntity<ArchivoNoticia> agregarArchivo(
+    public ResponseEntity<ArchivoNoticiaResponse> agregarArchivo(
             @RequestParam Long idNoticia,
-            @RequestBody ArchivoNoticia archivoNoticia) {
+            @Valid @RequestBody ArchivoNoticiaRequest archivoNoticiaRequest) {
 
-        ArchivoNoticia nuevoArchivo = archivoServicio.agregarArchivo(archivoNoticia, idNoticia);
+        ArchivoNoticiaResponse nuevoArchivo = archivoServicio.agregarArchivo(archivoNoticiaRequest, idNoticia);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoArchivo);
     }
 
     @GetMapping("/archivo/{idNoticia}")
-    public ResponseEntity<List<ArchivoNoticia>> consultarArchivosDeNoticias(
+    public ResponseEntity<List<ArchivoNoticiaResponse>> consultarArchivosDeNoticias(
             @PathVariable Long idNoticia){
 
         return ResponseEntity.ok(archivoServicio.consultarArchivosDeNoticias(idNoticia)
@@ -36,22 +40,22 @@ public class ArchivoControlador {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ArchivoNoticia> modificarArchivo(
+    public ResponseEntity<ArchivoNoticiaResponse> modificarArchivo(
             @PathVariable Long id,
-            @RequestBody ArchivoNoticia archivoActualizado){
+            @Valid @RequestBody ArchivoNoticiaRequest archivoNoticiaRequest){
 
-        ArchivoNoticia archivoModificado = archivoServicio.modificarArchivo(id, archivoActualizado);
+        ArchivoNoticiaResponse archivoModificado = archivoServicio.modificarArchivo(id, archivoNoticiaRequest);
 
         return ResponseEntity.ok(archivoModificado);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminarArchivo(
+    public ResponseEntity<Void> eliminarArchivo(
             @PathVariable Long id){
 
         archivoServicio.eliminarArchivo(id);
 
-        return ResponseEntity.ok("El archivo fue eliminado correctamente.");
+        return ResponseEntity.noContent().build();
     }
 
 }

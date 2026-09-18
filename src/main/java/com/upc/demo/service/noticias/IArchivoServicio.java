@@ -1,18 +1,20 @@
 package com.upc.demo.service.noticias;
 
+import com.upc.demo.dto.request.noticias.ArchivoNoticiaRequest;
+import com.upc.demo.dto.response.noticias.ArchivoNoticiaResponse;
 import com.upc.demo.entity.noticias.ArchivoNoticia;
 
 import java.util.List;
 
 public interface IArchivoServicio {
 
-    ArchivoNoticia agregarArchivo(ArchivoNoticia archivoNoticia, Long idNoticia);
+    ArchivoNoticiaResponse agregarArchivo(ArchivoNoticiaRequest archivoNoticiaRequest, Long idNoticia);
 
-    ArchivoNoticia modificarArchivo(Long idArchivo, ArchivoNoticia archivoActualizado);
+    ArchivoNoticiaResponse modificarArchivo(Long idArchivo, ArchivoNoticiaRequest archivoNoticiaRequest);
 
-    ArchivoNoticia eliminarArchivo(Long idArchivo);
+    void eliminarArchivo(Long idArchivo);
 
     ArchivoNoticia descargarArchivo(Long idArchivo);
 
-    List<ArchivoNoticia> consultarArchivosDeNoticias(Long idNoticia);
+    List<ArchivoNoticiaResponse> consultarArchivosDeNoticias(Long idNoticia);
 }

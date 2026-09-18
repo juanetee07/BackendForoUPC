@@ -1,7 +1,11 @@
 package com.upc.demo.controller.noticias;
 
+import com.upc.demo.dto.request.noticias.CategoriaNoticiaRequest;
+import com.upc.demo.dto.response.noticias.CategoriaNoticiaResponse;
 import com.upc.demo.entity.noticias.CategoriaNoticia;
+import com.upc.demo.repository.noticias.CategoriaNoticiaRepositorio;
 import com.upc.demo.service.noticias.ICategoriaServicio;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +21,16 @@ public class CategoriaControlador {
     private ICategoriaServicio categoriaServicio;
 
     @GetMapping("/todos")
-    public ResponseEntity<List<CategoriaNoticia>> listarCategoria() {
+    public ResponseEntity<List<CategoriaNoticiaResponse>> listarCategoria() {
 
-        List<CategoriaNoticia> categoriaNoticias = categoriaServicio.listarCategoria();
+        List<CategoriaNoticiaResponse> categoriaNoticias =
+                categoriaServicio.listarCategoria();
+
         return ResponseEntity.ok(categoriaNoticias);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoriaNoticia> consultarCategoria(
+    public ResponseEntity<CategoriaNoticiaResponse> consultarCategoria(
             @PathVariable Long id){
 
         return ResponseEntity.ok(categoriaServicio.consultarCategoria(id)
@@ -32,30 +38,30 @@ public class CategoriaControlador {
     }
 
     @PostMapping
-    public ResponseEntity<CategoriaNoticia> crearCategoria(
-            @RequestBody CategoriaNoticia categoriaNoticia) {
+    public ResponseEntity<CategoriaNoticiaResponse> crearCategoria(
+            @Valid @RequestBody CategoriaNoticiaRequest categoriaNoticiaRequest) {
 
-        CategoriaNoticia nuevaCategoria = categoriaServicio.crearCategoria(categoriaNoticia);
+        CategoriaNoticiaResponse nuevaCategoria = categoriaServicio.crearCategoria(categoriaNoticiaRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCategoria);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoriaNoticia> modificarCategoria(
+    public ResponseEntity<CategoriaNoticiaResponse> modificarCategoria(
             @PathVariable Long id,
-            @RequestBody CategoriaNoticia categoriaModificada){
+            @Valid @RequestBody CategoriaNoticiaRequest categoriaNoticiaRequest){
 
-        CategoriaNoticia categoriaActualizada = categoriaServicio.modificarCategoria(id, categoriaModificada);
+        CategoriaNoticiaResponse categoriaActualizada = categoriaServicio.modificarCategoria(id, categoriaNoticiaRequest);
 
         return ResponseEntity.ok(categoriaActualizada);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminarCategoria(
+    public ResponseEntity<Void> eliminarCategoria(
             @PathVariable Long id){
 
         categoriaServicio.eliminarCategoria(id);
 
-        return ResponseEntity.ok("La categoria fue eliminada correctamente.");
+        return ResponseEntity.noContent().build();
     }
 }

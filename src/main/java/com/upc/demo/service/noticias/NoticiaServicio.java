@@ -1,5 +1,7 @@
 package com.upc.demo.service.noticias;
 
+import com.upc.demo.dto.request.noticias.NoticiaRequest;
+import com.upc.demo.dto.response.noticias.NoticiaResponse;
 import com.upc.demo.entity.noticias.CategoriaNoticia;
 import com.upc.demo.entity.noticias.EstadoNoticia;
 import com.upc.demo.entity.noticias.Noticia;
@@ -26,9 +28,25 @@ public class NoticiaServicio implements INoticiaServicio{
     private CategoriaNoticiaRepositorio categoriaRepo;
 
     @Override
-    public List<Noticia> listarNoticias() {
+    public List<NoticiaResponse> listarNoticias() {
 
-        List<Noticia> noticias = noticiaRepo.findAll().stream().filter(n -> n.getEstado() == EstadoNoticia.PUBLICADA).toList();
+        List<NoticiaResponse> noticias = noticiaRepo.findAll()
+                .stream()
+                .filter(n -> n.getEstado() == EstadoNoticia.PUBLICADA)
+                .map(n -> {
+                    NoticiaResponse response = new NoticiaResponse();
+
+                    response.setId(n.getId());
+                    response.setTitulo(n.getTitulo());
+                    response.setCuerpo(n.getCuerpo());
+                    response.setFechaCreacion(n.getFechaCreacion());
+                    response.setFechaPublicacion(n.getFechaPublicacion());
+                    response.setFechaActualizacion(n.getFechaActualizacion());
+                    response.setEstado(n.getEstado());
+
+                    return response;
+                })
+                .toList();
 
         if (noticias.isEmpty()) {
             throw new RuntimeException("No hay noticias disponibles");
@@ -38,105 +56,125 @@ public class NoticiaServicio implements INoticiaServicio{
     }
 
     @Override
-    public Noticia crearNoticia(Noticia noticia, Long idAutor) {
+    public NoticiaResponse crearNoticia(NoticiaRequest noticiaRequest, Long usuarioId) {
 
-        /*Si el titulo de esa noticia no existe o si el titulo de esa noticia esta vacia entonces no podemos guardarlo*/
-        if (noticia.getTitulo() == null || noticia.getTitulo().trim().isEmpty()){
-            throw new IllegalArgumentException("El título de la noticia es obligatorio");
-        }
-        /*Se aplica la misma logica que la anterior pero con Cuerpo*/
-        if (noticia.getCuerpo() == null || noticia.getCuerpo().trim().isEmpty()) {
-            throw new IllegalArgumentException("El cuerpo de la noticia es obligatorio");
-        }
+        // Buscar la categoría
+        CategoriaNoticia categoria = categoriaRepo.findById(noticiaRequest.getCategoriaId())
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
-        /*Si la categoria no existe*/
-        if (noticia.getCategoriaNoticia() == null) {
-            throw new IllegalArgumentException("La noticia debe tener una categoría");
-        }
+        // Buscar el autor
+        Usuario autor = usuarioRepo.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Autor no encontrado"));
 
-        /*Si la categoria no es valida*/
-        if (noticia.getCategoriaNoticia().getId() == null) {
-            throw new IllegalArgumentException("Debe seleccionar una categoría válida");
-        }
-
-        /*Buscar una categoria*/
-        CategoriaNoticia categoria = categoriaRepo.findById(noticia.getCategoriaNoticia().getId()).orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
-
-        /*Se debe de vincular un autor a la noticia*/
-        Usuario autor = usuarioRepo.findById(idAutor).orElseThrow(() -> new RuntimeException("Autor no encontrado"));
-
-        /*Se debe de verificar si el usuario tiene asignado un rol*/
+        // Verificar que el usuario tenga un rol
         if (autor.getRol() == null) {
             throw new RuntimeException("El usuario no tiene un rol asignado");
         }
 
+        // Verificar permisos
         String rol = autor.getRol().getNombre();
 
-        /*Se verifica que el usuario tenga los permisos necesarios */
-        if (!rol.equalsIgnoreCase("ADMINISTRADOR") && !rol.equalsIgnoreCase("PERSONAL_ESCUELA")) {
+        if (!rol.equalsIgnoreCase("ADMINISTRADOR")
+                && !rol.equalsIgnoreCase("PERSONAL_ESCUELA")) {
             throw new RuntimeException("No tiene permisos para crear noticias");
         }
 
+        // Crear la entidad Noticia
+        Noticia noticia = new Noticia();
+
+        noticia.setTitulo(noticiaRequest.getTitulo());
+        noticia.setCuerpo(noticiaRequest.getCuerpo());
         noticia.setCategoriaNoticia(categoria);
         noticia.setAutor(autor);
-
-        /*Se asigna la fecha de creacion y el estado predeterminado*/
         noticia.setFechaCreacion(LocalDateTime.now());
         noticia.setEstado(EstadoNoticia.BORRADOR);
 
-        /*Se guarda la noticia creada*/
-        return noticiaRepo.save(noticia);
+        // Guardar la noticia
+        Noticia noticiaGuardada = noticiaRepo.save(noticia);
+
+        // Crear respuesta
+        NoticiaResponse response = new NoticiaResponse();
+
+        response.setId(noticiaGuardada.getId());
+        response.setTitulo(noticiaGuardada.getTitulo());
+        response.setCuerpo(noticiaGuardada.getCuerpo());
+        response.setFechaCreacion(noticiaGuardada.getFechaCreacion());
+        response.setFechaPublicacion(noticiaGuardada.getFechaPublicacion());
+        response.setFechaActualizacion(noticiaGuardada.getFechaActualizacion());
+        response.setEstado(noticiaGuardada.getEstado());
+
+        return response;
     }
 
     @Override
-    public Noticia editarNoticia(Long idNoticia, Noticia noticiaActualizada, Long idAutor) {
+    public NoticiaResponse editarNoticia(
+            Long idNoticia,
+            NoticiaRequest noticiaActualizada,
+            Long idAutor) {
 
-        /*Se debe de buscar que la noticia exista*/
-        Noticia noticiaExistente = noticiaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("Noticia no encontrada"));
+        /* Buscar la noticia */
+        Noticia noticiaExistente = noticiaRepo.findById(idNoticia)
+                .orElseThrow(() ->
+                        new RuntimeException("Noticia no encontrada"));
 
-        /*Se debe de buscar el usuario que exista*/
-        Usuario usuario = usuarioRepo.findById(idAutor).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        /* Buscar el usuario */
+        Usuario usuario = usuarioRepo.findById(idAutor)
+                .orElseThrow(() ->
+                        new RuntimeException("Usuario no encontrado"));
 
-        /*Si el titulo de la noticia no existe o si el titulo de esa noticia esta vacia entonces no podemos guardar la actualizacion */
-        if (noticiaActualizada.getTitulo() == null || noticiaActualizada.getTitulo().trim().isEmpty()) {
-            throw new IllegalArgumentException("El título de la noticia es obligatorio");
-        }
+        /* Buscar la categoría */
+        CategoriaNoticia categoria = categoriaRepo.findById(noticiaActualizada.getCategoriaId())
+                .orElseThrow(() ->
+                        new RuntimeException("Categoría no encontrada"));
 
-        if (noticiaActualizada.getCuerpo() == null || noticiaActualizada.getCuerpo().trim().isEmpty()) {
-            throw new IllegalArgumentException("El cuerpo de la noticia es obligatorio");
-        }
-
-        if (noticiaActualizada.getCategoriaNoticia() == null || noticiaActualizada.getCategoriaNoticia().getId() == null) {
-            throw new IllegalArgumentException("Debe seleccionar una categoría válida");
-        }
-
-        CategoriaNoticia categoria = categoriaRepo.findById(noticiaActualizada.getCategoriaNoticia().getId()).orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
-
-        /*Se debe de verificar si el usuario tiene asignado un rol*/
+        /* Verificar que el usuario tenga un rol */
         if (usuario.getRol() == null) {
             throw new RuntimeException("El usuario no tiene un rol asignado");
         }
 
         String rol = usuario.getRol().getNombre();
 
-        /*Se verifica que el usuario tenga los permisos necesarios */
-        if (!rol.equalsIgnoreCase("ADMINISTRADOR") && !rol.equalsIgnoreCase("PERSONAL_ESCUELA")) {
-            throw new RuntimeException("No tiene permisos para editar noticias");
+        /* Verificar permisos */
+        if (!rol.equalsIgnoreCase("ADMINISTRADOR")
+                && !rol.equalsIgnoreCase("PERSONAL_ESCUELA")) {
+
+            throw new RuntimeException(
+                    "No tiene permisos para editar noticias"
+            );
         }
 
-        /*Se verifica si el usuario PERSONAL_ESCUELA redacto esa noticia para poder editarla*/
-        if (rol.equalsIgnoreCase("PERSONAL_ESCUELA") && !noticiaExistente.getAutor().getIdUsuario().equals(usuario.getIdUsuario())) {
-            throw new RuntimeException("Solo puede editar sus propias noticias");
+        /* PERSONAL_ESCUELA solo puede editar sus propias noticias */
+        if (rol.equalsIgnoreCase("PERSONAL_ESCUELA")
+                && !noticiaExistente.getAutor()
+                .getIdUsuario()
+                .equals(usuario.getIdUsuario())) {
+
+            throw new RuntimeException(
+                    "Solo puede editar sus propias noticias"
+            );
         }
 
-        /*Actualizamos*/
+        /* Actualizar los datos */
         noticiaExistente.setTitulo(noticiaActualizada.getTitulo());
         noticiaExistente.setCuerpo(noticiaActualizada.getCuerpo());
         noticiaExistente.setCategoriaNoticia(categoria);
-
         noticiaExistente.setFechaActualizacion(LocalDateTime.now());
 
-        return noticiaRepo.save(noticiaExistente);
+        /* Guardar */
+        Noticia noticiaGuardada = noticiaRepo.save(noticiaExistente);
+
+        /* Convertir a Response */
+        NoticiaResponse response = new NoticiaResponse();
+
+        response.setId(noticiaGuardada.getId());
+        response.setTitulo(noticiaGuardada.getTitulo());
+        response.setCuerpo(noticiaGuardada.getCuerpo());
+        response.setFechaCreacion(noticiaGuardada.getFechaCreacion());
+        response.setFechaPublicacion(noticiaGuardada.getFechaPublicacion());
+        response.setFechaActualizacion(noticiaGuardada.getFechaActualizacion());
+        response.setEstado(noticiaGuardada.getEstado());
+
+        return response;
     }
 
     @Override
@@ -212,17 +250,31 @@ public class NoticiaServicio implements INoticiaServicio{
     }
 
     @Override
-    public Noticia consultarNoticia(Long idNoticia) {
+    public NoticiaResponse consultarNoticia(Long idNoticia) {
 
-        /*Verificar que la noticia exista*/
-        Noticia noticia = noticiaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("Noticia no encontrada"));
+        /* Verificar que la noticia exista */
+        Noticia noticia = noticiaRepo.findById(idNoticia)
+                .orElseThrow(() -> new RuntimeException("Noticia no encontrada"));
 
-        /*Se verifica el estado*/
+        /* Verificar que esté publicada */
         if (noticia.getEstado() != EstadoNoticia.PUBLICADA) {
-            throw new RuntimeException("La noticia no se encuentra disponible para consulta");
+            throw new RuntimeException(
+                    "La noticia no se encuentra disponible para consulta"
+            );
         }
 
-        return noticia;
+        /* Convertir Noticia a NoticiaResponse */
+        NoticiaResponse response = new NoticiaResponse();
+
+        response.setId(noticia.getId());
+        response.setTitulo(noticia.getTitulo());
+        response.setCuerpo(noticia.getCuerpo());
+        response.setFechaCreacion(noticia.getFechaCreacion());
+        response.setFechaPublicacion(noticia.getFechaPublicacion());
+        response.setFechaActualizacion(noticia.getFechaActualizacion());
+        response.setEstado(noticia.getEstado());
+
+        return response;
     }
 
     @Override
@@ -242,12 +294,11 @@ public class NoticiaServicio implements INoticiaServicio{
     }
 
     @Override
-    public Noticia eliminarNoticia(Long idNoticia) {
+    public void eliminarNoticia(Long idNoticia) {
 
         Noticia noticia = noticiaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("No existe una noticia con el ID: " + idNoticia));
 
         noticiaRepo.delete(noticia);
 
-        return noticia;
     }
 }

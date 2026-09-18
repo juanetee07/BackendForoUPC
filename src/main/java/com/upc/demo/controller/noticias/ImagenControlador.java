@@ -1,7 +1,10 @@
 package com.upc.demo.controller.noticias;
 
+import com.upc.demo.dto.request.noticias.ImagenNoticiaRequest;
+import com.upc.demo.dto.response.noticias.ImagenNoticiaResponse;
 import com.upc.demo.entity.noticias.ImagenNoticia;
 import com.upc.demo.service.noticias.IImagenServicio;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +21,17 @@ public class ImagenControlador {
     private IImagenServicio imagenServicio;
 
     @PostMapping
-    public ResponseEntity<ImagenNoticia> agregarImagen(
-            @RequestParam Long idNoticia,
-            @RequestBody ImagenNoticia imagenNoticia) {
+    public ResponseEntity<ImagenNoticiaResponse> agregarImagen(
+            @Valid @RequestBody ImagenNoticiaRequest imagenNoticiaRequest,
+            @RequestParam Long idNoticia) {
 
-        ImagenNoticia imagenActualizada = imagenServicio.agregarImagen(imagenNoticia, idNoticia);
+        ImagenNoticiaResponse imagenActualizada = imagenServicio.agregarImagen(imagenNoticiaRequest, idNoticia);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(imagenActualizada);
     }
 
     @GetMapping("/imagen/{idNoticia}")
-    public ResponseEntity<List<ImagenNoticia>> consultarImagenesPorNoticia(
+    public ResponseEntity<List<ImagenNoticiaResponse>> consultarImagenesPorNoticia(
             @PathVariable Long idNoticia){
 
         return ResponseEntity.ok(imagenServicio.consultarImagenesPorNoticia(idNoticia)
@@ -37,21 +40,21 @@ public class ImagenControlador {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ImagenNoticia> modificarImagen(
+    public ResponseEntity<ImagenNoticiaResponse> modificarImagen(
             @PathVariable Long id,
-            @RequestBody ImagenNoticia imagenActualizada){
+            @Valid @RequestBody ImagenNoticiaRequest imagenNoticiaRequest){
 
-        ImagenNoticia imagenModificada = imagenServicio.modificarImagen(id, imagenActualizada);
+        ImagenNoticiaResponse imagenModificada = imagenServicio.modificarImagen(id, imagenNoticiaRequest);
 
         return ResponseEntity.ok(imagenModificada);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminarImagen(
+    public ResponseEntity<Void> eliminarImagen(
             @PathVariable Long id){
 
         imagenServicio.eliminarImagen(id);
 
-        return ResponseEntity.ok("La imagen fue eliminada correctamente.");
+        return ResponseEntity.noContent().build();
     }
 }
