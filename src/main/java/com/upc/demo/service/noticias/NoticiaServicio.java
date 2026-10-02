@@ -1,7 +1,11 @@
 package com.upc.demo.service.noticias;
 
 import com.upc.demo.dto.request.noticias.NoticiaRequest;
+import com.upc.demo.dto.response.noticias.ArchivoNoticiaResponse;
+import com.upc.demo.dto.response.noticias.CategoriaNoticiaResponse;
+import com.upc.demo.dto.response.noticias.ImagenNoticiaResponse;
 import com.upc.demo.dto.response.noticias.NoticiaResponse;
+import com.upc.demo.dto.response.usuarios.UsuarioResponseDTO;
 import com.upc.demo.entity.noticias.CategoriaNoticia;
 import com.upc.demo.entity.noticias.EstadoNoticia;
 import com.upc.demo.entity.noticias.Noticia;
@@ -28,12 +32,13 @@ public class NoticiaServicio implements INoticiaServicio{
     private CategoriaNoticiaRepositorio categoriaRepo;
 
     @Override
-    public List<NoticiaResponse> listarNoticias() {
+    public List<NoticiaResponse> listarNoticiasPublicadas() {
 
-        List<NoticiaResponse> noticias = noticiaRepo.findAll()
+        return noticiaRepo.findAll()
                 .stream()
                 .filter(n -> n.getEstado() == EstadoNoticia.PUBLICADA)
                 .map(n -> {
+
                     NoticiaResponse response = new NoticiaResponse();
 
                     response.setId(n.getId());
@@ -44,15 +49,112 @@ public class NoticiaServicio implements INoticiaServicio{
                     response.setFechaActualizacion(n.getFechaActualizacion());
                     response.setEstado(n.getEstado());
 
+                    // Autor
+                    if (n.getAutor() != null) {
+
+                        UsuarioResponseDTO autorResponse =
+                                new UsuarioResponseDTO();
+
+                        autorResponse.setIdUsuario(n.getAutor().getIdUsuario());
+                        autorResponse.setNombre(n.getAutor().getNombre());
+                        autorResponse.setApellido(n.getAutor().getApellido());
+                        autorResponse.setDni(n.getAutor().getDni());
+                        autorResponse.setEmail(n.getAutor().getEmail());
+                        autorResponse.setEstado(n.getAutor().getEstado());
+                        autorResponse.setEstadoSolicitud(
+                                n.getAutor().getEstadoSolicitud()
+                        );
+                        autorResponse.setFechaRegistro(
+                                n.getAutor().getFechaRegistro()
+                        );
+                        autorResponse.setUltimoAcceso(
+                                n.getAutor().getUltimoAcceso()
+                        );
+
+                        if (n.getAutor().getRol() != null) {
+                            autorResponse.setIdRol(
+                                    n.getAutor().getRol().getIdRol()
+                            );
+
+                            autorResponse.setNombreRol(
+                                    n.getAutor().getRol().getNombre()
+                            );
+                        }
+
+                        response.setAutor(autorResponse);
+                    }
+
+                    // Categoría
+                    if (n.getCategoriaNoticia() != null) {
+
+                        CategoriaNoticiaResponse categoriaResponse =
+                                new CategoriaNoticiaResponse();
+
+                        categoriaResponse.setId(
+                                n.getCategoriaNoticia().getId()
+                        );
+
+                        categoriaResponse.setNombre(
+                                n.getCategoriaNoticia().getNombre()
+                        );
+
+                        response.setCategoriaNoticia(categoriaResponse);
+                    }
+
+                    // Imágenes
+                    if (n.getImagenes() != null) {
+
+                        response.setImagenes(
+                                n.getImagenes()
+                                        .stream()
+                                        .map(imagen -> {
+
+                                            ImagenNoticiaResponse imagenResponse =
+                                                    new ImagenNoticiaResponse();
+
+                                            imagenResponse.setId(imagen.getId());
+                                            imagenResponse.setUrl(imagen.getUrl());
+                                            imagenResponse.setEpigrafe(
+                                                    imagen.getEpigrafe()
+                                            );
+
+                                            return imagenResponse;
+                                        })
+                                        .toList()
+                        );
+                    }
+
+                    // Archivos
+                    if (n.getArchivos() != null) {
+
+                        response.setArchivos(
+                                n.getArchivos()
+                                        .stream()
+                                        .map(archivo -> {
+
+                                            ArchivoNoticiaResponse archivoResponse =
+                                                    new ArchivoNoticiaResponse();
+
+                                            archivoResponse.setId(archivo.getId());
+                                            archivoResponse.setNombre(
+                                                    archivo.getNombre()
+                                            );
+                                            archivoResponse.setUrl(
+                                                    archivo.getUrl()
+                                            );
+                                            archivoResponse.setTipo(
+                                                    archivo.getTipo()
+                                            );
+
+                                            return archivoResponse;
+                                        })
+                                        .toList()
+                        );
+                    }
+
                     return response;
                 })
                 .toList();
-
-        if (noticias.isEmpty()) {
-            throw new RuntimeException("No hay noticias disponibles");
-        }
-
-        return noticias;
     }
 
     @Override
@@ -217,34 +319,67 @@ public class NoticiaServicio implements INoticiaServicio{
     }
 
     @Override
-    public Noticia cambiarEstado( Long idNoticia, EstadoNoticia nuevoEstado, Long idAutor) {
+    public Noticia cambiarEstado(
+            Long idNoticia,
+            EstadoNoticia nuevoEstado,
+            Long idAutor) {
 
         if (nuevoEstado == null) {
-            throw new IllegalArgumentException("El nuevo estado no puede ser nulo.");
+            throw new IllegalArgumentException(
+                    "El nuevo estado no puede ser nulo."
+            );
         }
 
-        Noticia noticia = noticiaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("Noticia no encontrada"));
+        Noticia noticia = noticiaRepo.findById(idNoticia)
+                .orElseThrow(() ->
+                        new RuntimeException("Noticia no encontrada"));
 
-        Usuario usuario = usuarioRepo.findById(idAutor).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Usuario usuario = usuarioRepo.findById(idAutor)
+                .orElseThrow(() ->
+                        new RuntimeException("Usuario no encontrado"));
 
-        /*Se debe de verificar si el usuario tiene asignado un rol*/
-        if (usuario.getRol() == null || usuario.getRol().getNombre() == null) {
-            throw new RuntimeException("El usuario no tiene un rol asignado");
+        // Verificar rol
+        if (usuario.getRol() == null ||
+                usuario.getRol().getNombre() == null) {
+
+            throw new RuntimeException(
+                    "El usuario no tiene un rol asignado"
+            );
         }
 
         String rol = usuario.getRol().getNombre();
 
+        // Solo ADMINISTRADOR puede cambiar el estado
         if (!rol.equalsIgnoreCase("ADMINISTRADOR")) {
             throw new RuntimeException(
-                    "Solo un administrador puede cambiar el estado de una noticia");
+                    "Solo un administrador puede cambiar el estado de una noticia"
+            );
         }
 
+        // Verificar que realmente haya un cambio
         if (noticia.getEstado() == nuevoEstado) {
-            throw new RuntimeException("La noticia ya se encuentra en estado: " + nuevoEstado);
+            throw new RuntimeException(
+                    "La noticia ya se encuentra en estado: " + nuevoEstado
+            );
         }
 
+        EstadoNoticia estadoAnterior = noticia.getEstado();
+
+        // Actualizar estado
         noticia.setEstado(nuevoEstado);
         noticia.setFechaActualizacion(LocalDateTime.now());
+
+        // Si pasa a PUBLICADA, registrar fecha de publicación
+        if (nuevoEstado == EstadoNoticia.PUBLICADA) {
+            noticia.setFechaPublicacion(LocalDateTime.now());
+        }
+
+        // Si deja de estar publicada, opcionalmente limpiar fecha
+        if (estadoAnterior == EstadoNoticia.PUBLICADA &&
+                nuevoEstado != EstadoNoticia.PUBLICADA) {
+
+            noticia.setFechaPublicacion(null);
+        }
 
         return noticiaRepo.save(noticia);
     }

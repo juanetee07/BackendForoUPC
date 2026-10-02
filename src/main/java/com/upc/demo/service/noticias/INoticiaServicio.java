@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface INoticiaServicio {
 
-    List<NoticiaResponse> listarNoticias();
+    List<NoticiaResponse> listarNoticiasPublicadas();
 
     NoticiaResponse crearNoticia(NoticiaRequest noticiaRequest, Long usuarioId);
 

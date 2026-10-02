@@ -20,10 +20,9 @@ public class NoticiaControlador {
     private INoticiaServicio noticiaServicio;
 
     @GetMapping("/todos")
-    public ResponseEntity<List<NoticiaResponse>> listarNoticias() {
+    public ResponseEntity<List<NoticiaResponse>> listarNoticiasPublicadas() {
 
-        List<NoticiaResponse> noticias = noticiaServicio.listarNoticias();
-
+        List<NoticiaResponse> noticias = noticiaServicio.listarNoticiasPublicadas();
         return ResponseEntity.ok(noticias);
     }
 
