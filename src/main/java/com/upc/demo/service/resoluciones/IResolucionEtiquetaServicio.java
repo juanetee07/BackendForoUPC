@@ -1,16 +1,17 @@
 package com.upc.demo.service.resoluciones;
 
-import com.upc.demo.entity.resoluciones.ResolucionEtiqueta;
+import com.upc.demo.dto.request.resoluciones.ResolucionEtiquetaRequestDTO;
+import com.upc.demo.dto.response.resoluciones.ResolucionEtiquetaResponseDTO;
 
 import java.util.List;
 
 public interface IResolucionEtiquetaServicio {
 
-    ResolucionEtiqueta guardar(ResolucionEtiqueta resolucionEtiqueta);
+    ResolucionEtiquetaResponseDTO guardar(ResolucionEtiquetaRequestDTO requestDTO);
 
-    ResolucionEtiqueta buscarPorId(Long id);
+    ResolucionEtiquetaResponseDTO buscarPorId(Long id);
 
-    List<ResolucionEtiqueta> listarTodos();
+    List<ResolucionEtiquetaResponseDTO> listarTodos();
 
     void eliminar(Long id);
 }

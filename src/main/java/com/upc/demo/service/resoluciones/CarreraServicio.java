@@ -1,5 +1,7 @@
 package com.upc.demo.service.resoluciones;
 
+import com.upc.demo.dto.request.resoluciones.CarreraRequestDTO;
+import com.upc.demo.dto.response.resoluciones.CarreraResponseDTO;
 import com.upc.demo.entity.resoluciones.Carrera;
 import com.upc.demo.repository.resoluciones.CarreraRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,62 +15,82 @@ public class CarreraServicio implements ICarreraServicio {
     @Autowired
     private CarreraRepository carreraRepository;
 
+    private CarreraResponseDTO toResponseDTO(Carrera carrera) {
+        if (carrera == null) {
+            return null;
+        }
+        return new CarreraResponseDTO(
+                carrera.getIdCarrera(),
+                carrera.getNombre()
+        );
+    }
+
+    private Carrera buscarEntidadPorId(Long id) {
+        return carreraRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("No existe una carrera con ID: " + id));
+    }
+
     @Override
-    public Carrera guardar(Carrera carrera) {
+    public CarreraResponseDTO guardar(CarreraRequestDTO requestDTO) {
 
-        validarCarrera(carrera);
+        validarCarrera(requestDTO);
 
-        if (carreraRepository.existsByNombre(
-                carrera.getNombre())) {
-
+        if (carreraRepository.existsByNombre(requestDTO.getNombre())) {
             throw new IllegalArgumentException(
                     "Ya existe una carrera con ese nombre."
             );
         }
 
-        return carreraRepository.save(carrera);
+        Carrera carrera = Carrera.builder()
+                .nombre(requestDTO.getNombre())
+                .build();
+
+        Carrera guardada = carreraRepository.save(carrera);
+        return toResponseDTO(guardada);
     }
 
     @Override
-    public Carrera buscarPorId(Long id) {
-
-        return carreraRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "No existe una carrera con ID: " + id
-                        ));
+    public CarreraResponseDTO buscarPorId(Long id) {
+        return toResponseDTO(buscarEntidadPorId(id));
     }
 
     @Override
-    public List<Carrera> listarTodos() {
-
-        return carreraRepository.findAll();
+    public List<CarreraResponseDTO> listarTodos() {
+        return carreraRepository.findAll().stream()
+                .map(this::toResponseDTO)
+                .toList();
     }
 
     @Override
-    public Carrera actualizar(Long id,
-                              Carrera datosActualizados) {
+    public CarreraResponseDTO actualizar(Long id, CarreraRequestDTO datosActualizados) {
 
-        Carrera carrera = buscarPorId(id);
+        Carrera carrera = buscarEntidadPorId(id);
 
         validarCarrera(datosActualizados);
 
-        carrera.setNombre(
-                datosActualizados.getNombre()
-        );
+        if (!carrera.getNombre().equalsIgnoreCase(datosActualizados.getNombre())
+                && carreraRepository.existsByNombre(datosActualizados.getNombre())) {
+            throw new IllegalArgumentException(
+                    "Ya existe una carrera con ese nombre."
+            );
+        }
 
-        return carreraRepository.save(carrera);
+        carrera.setNombre(datosActualizados.getNombre());
+
+        Carrera actualizada = carreraRepository.save(carrera);
+        return toResponseDTO(actualizada);
     }
 
     @Override
     public void eliminar(Long id) {
 
-        Carrera carrera = buscarPorId(id);
+        Carrera carrera = buscarEntidadPorId(id);
 
         carreraRepository.delete(carrera);
     }
 
-    private void validarCarrera(Carrera carrera) {
+    private void validarCarrera(CarreraRequestDTO carrera) {
 
         if (carrera.getNombre() == null
                 || carrera.getNombre().isBlank()) {

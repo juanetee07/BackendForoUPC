@@ -1,18 +1,19 @@
 package com.upc.demo.service.resoluciones;
 
-import com.upc.demo.entity.resoluciones.Comentario;
+import com.upc.demo.dto.request.resoluciones.ComentarioRequestDTO;
+import com.upc.demo.dto.response.resoluciones.ComentarioResponseDTO;
 
 import java.util.List;
 
 public interface IComentarioServicio {
 
-    Comentario guardar(Comentario comentario);
+    ComentarioResponseDTO guardar(ComentarioRequestDTO requestDTO);
 
-    Comentario buscarPorId(Long id);
+    ComentarioResponseDTO buscarPorId(Long id);
 
-    List<Comentario> listarTodos();
+    List<ComentarioResponseDTO> listarTodos();
 
-    Comentario actualizar(Long id, Comentario comentario);
+    ComentarioResponseDTO actualizar(Long id, ComentarioRequestDTO requestDTO);
 
     void eliminar(Long id);
 }

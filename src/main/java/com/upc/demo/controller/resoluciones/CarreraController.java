@@ -1,8 +1,10 @@
 package com.upc.demo.controller.resoluciones;
 
-import com.upc.demo.entity.resoluciones.Carrera;
+import com.upc.demo.dto.request.resoluciones.CarreraRequestDTO;
+import com.upc.demo.dto.response.resoluciones.CarreraResponseDTO;
 import com.upc.demo.service.resoluciones.ICarreraServicio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +21,7 @@ public class CarreraController {
      * Obtiene todas las carreras.
      */
     @GetMapping("/todos")
-    public ResponseEntity<List<Carrera>> listarTodos() {
+    public ResponseEntity<List<CarreraResponseDTO>> listarTodos() {
 
         return ResponseEntity.ok(
                 carreraServicio.listarTodos()
@@ -30,7 +32,7 @@ public class CarreraController {
      * Obtiene una carrera por ID.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Carrera> buscarPorId(
+    public ResponseEntity<CarreraResponseDTO> buscarPorId(
             @PathVariable Long id) {
 
         return ResponseEntity.ok(
@@ -42,24 +44,23 @@ public class CarreraController {
      * Crea una nueva carrera.
      */
     @PostMapping
-    public ResponseEntity<Carrera> guardar(
-            @RequestBody Carrera carrera) {
+    public ResponseEntity<CarreraResponseDTO> guardar(
+            @RequestBody CarreraRequestDTO requestDTO) {
 
-        return ResponseEntity.ok(
-                carreraServicio.guardar(carrera)
-        );
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(carreraServicio.guardar(requestDTO));
     }
 
     /**
      * Actualiza una carrera existente.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Carrera> actualizar(
+    public ResponseEntity<CarreraResponseDTO> actualizar(
             @PathVariable Long id,
-            @RequestBody Carrera carrera) {
+            @RequestBody CarreraRequestDTO requestDTO) {
 
         return ResponseEntity.ok(
-                carreraServicio.actualizar(id, carrera)
+                carreraServicio.actualizar(id, requestDTO)
         );
     }
 

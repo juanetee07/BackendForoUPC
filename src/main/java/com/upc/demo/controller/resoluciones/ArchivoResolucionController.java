@@ -1,8 +1,10 @@
 package com.upc.demo.controller.resoluciones;
 
-import com.upc.demo.entity.resoluciones.ArchivoResolucion;
+import com.upc.demo.dto.request.resoluciones.ArchivoResolucionRequestDTO;
+import com.upc.demo.dto.response.resoluciones.ArchivoResolucionResponseDTO;
 import com.upc.demo.service.resoluciones.IArchivoResolucionServicio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +21,7 @@ public class ArchivoResolucionController {
      * Obtiene todos los archivos.
      */
     @GetMapping("/todos")
-    public ResponseEntity<List<ArchivoResolucion>> listarTodos() {
+    public ResponseEntity<List<ArchivoResolucionResponseDTO>> listarTodos() {
 
         return ResponseEntity.ok(
                 archivoServicio.listarTodos()
@@ -30,7 +32,7 @@ public class ArchivoResolucionController {
      * Obtiene un archivo por ID.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ArchivoResolucion> buscarPorId(
+    public ResponseEntity<ArchivoResolucionResponseDTO> buscarPorId(
             @PathVariable Long id) {
 
         return ResponseEntity.ok(
@@ -42,24 +44,23 @@ public class ArchivoResolucionController {
      * Crea un nuevo archivo.
      */
     @PostMapping
-    public ResponseEntity<ArchivoResolucion> guardar(
-            @RequestBody ArchivoResolucion archivo) {
+    public ResponseEntity<ArchivoResolucionResponseDTO> guardar(
+            @RequestBody ArchivoResolucionRequestDTO requestDTO) {
 
-        return ResponseEntity.ok(
-                archivoServicio.guardar(archivo)
-        );
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(archivoServicio.guardar(requestDTO));
     }
 
     /**
      * Actualiza un archivo existente.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<ArchivoResolucion> actualizar(
+    public ResponseEntity<ArchivoResolucionResponseDTO> actualizar(
             @PathVariable Long id,
-            @RequestBody ArchivoResolucion archivo) {
+            @RequestBody ArchivoResolucionRequestDTO requestDTO) {
 
         return ResponseEntity.ok(
-                archivoServicio.actualizar(id, archivo)
+                archivoServicio.actualizar(id, requestDTO)
         );
     }
 
