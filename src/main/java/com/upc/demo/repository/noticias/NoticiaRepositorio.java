@@ -39,4 +39,8 @@ public interface NoticiaRepositorio extends JpaRepository<Noticia, Long>{
             LocalDateTime fechaInicio,
             LocalDateTime fechaFin);
 
+    List<Noticia> findTop6ByEstadoOrderByFechaPublicacionDesc(
+            EstadoNoticia estado
+    );
+
 }

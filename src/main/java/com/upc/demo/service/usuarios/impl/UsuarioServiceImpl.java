@@ -1,5 +1,9 @@
 package com.upc.demo.service.usuarios.impl;
 
+import com.upc.demo.dto.request.usuarios.LoginRequestDTO;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.Locale;
 import com.upc.demo.dto.request.usuarios.UsuarioRequestDTO;
 import com.upc.demo.dto.response.usuarios.UsuarioResponseDTO;
 import com.upc.demo.entity.usuarios.Rol;
@@ -21,6 +25,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Autowired
     private RolRepository rolRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private UsuarioResponseDTO toResponseDTO(Usuario usuario) {
         if (usuario == null) {
@@ -80,18 +87,27 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
 
         if (requestDTO.getIdRol() == null) {
-            throw new RuntimeException("Rol no encontrado");
+            throw new IllegalArgumentException("El rol es obligatorio");
         }
 
         Rol rol = rolRepository.findById(requestDTO.getIdRol())
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+                .orElseThrow(() -> new RuntimeException(
+                        "No se encontró el rol con ID: " + requestDTO.getIdRol()
+                ));
 
+        // Crear el usuario antes de asignarle propiedades
         Usuario usuario = new Usuario();
+
         usuario.setNombre(requestDTO.getNombre());
         usuario.setApellido(requestDTO.getApellido());
         usuario.setEmail(requestDTO.getEmail());
         usuario.setDni(requestDTO.getDni());
-        usuario.setContraseña(requestDTO.getContraseña());
+
+        // Guardar la contraseña utilizando BCrypt
+        usuario.setContraseña(
+                passwordEncoder.encode(requestDTO.getContraseña())
+        );
+
         usuario.setRol(rol);
 
         if (requestDTO.getEstado() == null || requestDTO.getEstado().isBlank()) {
@@ -103,6 +119,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setFechaRegistro(LocalDateTime.now());
 
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
+
         return toResponseDTO(usuarioGuardado);
     }
 
@@ -178,5 +195,129 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuarioExistente.setEstado("INACTIVO");
 
         usuarioRepository.save(usuarioExistente);
+    }
+
+    @Override
+    @Transactional
+    public UsuarioResponseDTO registrar(UsuarioRequestDTO requestDTO) {
+
+        if (requestDTO.getNombre() == null
+                || requestDTO.getNombre().isBlank()) {
+            throw new IllegalArgumentException("El nombre es obligatorio");
+        }
+
+        if (requestDTO.getApellido() == null
+                || requestDTO.getApellido().isBlank()) {
+            throw new IllegalArgumentException("El apellido es obligatorio");
+        }
+
+        if (requestDTO.getDni() == null
+                || requestDTO.getDni().isBlank()) {
+            throw new IllegalArgumentException("El DNI es obligatorio");
+        }
+
+        if (requestDTO.getEmail() == null
+                || requestDTO.getEmail().isBlank()) {
+            throw new IllegalArgumentException("El email es obligatorio");
+        }
+
+        if (requestDTO.getContraseña() == null
+                || requestDTO.getContraseña().isBlank()) {
+            throw new IllegalArgumentException("La contraseña es obligatoria");
+        }
+
+        String email = requestDTO.getEmail()
+                .trim()
+                .toLowerCase(Locale.ROOT);
+
+        String dni = requestDTO.getDni().trim();
+
+        if (usuarioRepository.findByEmail(email) != null) {
+            throw new IllegalArgumentException(
+                    "Ya existe un usuario con ese email"
+            );
+        }
+
+        if (usuarioRepository.findByDni(dni) != null) {
+            throw new IllegalArgumentException(
+                    "Ya existe un usuario con ese DNI"
+            );
+        }
+
+        // El rol se define en el backend, no desde el formulario público.
+        Rol rol = rolRepository.findByNombre("USUARIO")
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "No se encontró el rol predeterminado"
+                        )
+                );
+
+        Usuario usuario = new Usuario();
+
+        usuario.setNombre(requestDTO.getNombre().trim());
+        usuario.setApellido(requestDTO.getApellido().trim());
+        usuario.setDni(dni);
+        usuario.setEmail(email);
+
+        // Nunca guardar la contraseña en texto plano.
+        usuario.setContraseña(
+                passwordEncoder.encode(requestDTO.getContraseña())
+        );
+
+        usuario.setRol(rol);
+        usuario.setEstado("ACTIVO");
+        usuario.setFechaRegistro(LocalDateTime.now());
+
+        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+
+        return toResponseDTO(usuarioGuardado);
+    }
+
+    @Override
+    @Transactional
+    public UsuarioResponseDTO login(LoginRequestDTO requestDTO) {
+
+        if (requestDTO.getEmail() == null
+                || requestDTO.getEmail().isBlank()) {
+            throw new IllegalArgumentException(
+                    "El email es obligatorio"
+            );
+        }
+
+        if (requestDTO.getContraseña() == null
+                || requestDTO.getContraseña().isBlank()) {
+            throw new IllegalArgumentException(
+                    "La contraseña es obligatoria"
+            );
+        }
+
+        String email = requestDTO.getEmail()
+                .trim()
+                .toLowerCase(Locale.ROOT);
+
+        Usuario usuario = usuarioRepository.findByEmail(email);
+
+        // Mensaje genérico para no revelar si el email existe.
+        if (usuario == null
+                || !passwordEncoder.matches(
+                requestDTO.getContraseña(),
+                usuario.getContraseña()
+        )) {
+            throw new IllegalArgumentException(
+                    "Credenciales inválidas"
+            );
+        }
+
+        if (!"ACTIVO".equalsIgnoreCase(usuario.getEstado())) {
+            throw new IllegalArgumentException(
+                    "La cuenta está inactiva"
+            );
+        }
+
+        usuario.setUltimoAcceso(LocalDateTime.now());
+
+        Usuario usuarioActualizado = usuarioRepository.save(usuario);
+
+        return toResponseDTO(usuarioActualizado);
     }
 }

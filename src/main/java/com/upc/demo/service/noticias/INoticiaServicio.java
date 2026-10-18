@@ -29,4 +29,6 @@ public interface INoticiaServicio {
     List<Noticia> buscarNoticiaPorFecha(LocalDateTime fechaInicio, LocalDateTime fechaFin);
 
     void eliminarNoticia(Long idNoticia);
+
+    List<NoticiaResponse> listar6Noticias();
 }

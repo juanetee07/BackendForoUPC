@@ -1,5 +1,6 @@
 package com.upc.demo.service.usuarios;
 
+import com.upc.demo.dto.request.usuarios.LoginRequestDTO;
 import com.upc.demo.dto.request.usuarios.UsuarioRequestDTO;
 import com.upc.demo.dto.response.usuarios.UsuarioResponseDTO;
 
@@ -20,4 +21,10 @@ public interface UsuarioService {
     UsuarioResponseDTO modificar(Long id, UsuarioRequestDTO requestDTO);
 
     void eliminar(Long id);
+
+    //AUTENTICACION
+
+    UsuarioResponseDTO registrar(UsuarioRequestDTO requestDTO);
+
+    UsuarioResponseDTO login(LoginRequestDTO requestDTO);
 }

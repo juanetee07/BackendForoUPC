@@ -26,6 +26,14 @@ public class NoticiaControlador {
         return ResponseEntity.ok(noticias);
     }
 
+    @GetMapping("/ultimas-seis")
+    public ResponseEntity<List<NoticiaResponse>> listar6Noticias() {
+
+        return ResponseEntity.ok(
+                noticiaServicio.listar6Noticias()
+        );
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<NoticiaResponse> consultarNoticia(
             @PathVariable Long id){

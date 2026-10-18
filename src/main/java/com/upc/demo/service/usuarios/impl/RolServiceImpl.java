@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RolServiceImpl implements RolService {
@@ -20,85 +21,127 @@ public class RolServiceImpl implements RolService {
         if (rol == null) {
             return null;
         }
+
         RolResponseDTO dto = new RolResponseDTO();
         dto.setIdRol(rol.getIdRol());
         dto.setNombre(rol.getNombre());
+
         return dto;
     }
 
     @Override
     public RolResponseDTO guardar(RolRequestDTO requestDTO) {
 
-        if (requestDTO.getNombre() == null || requestDTO.getNombre().isBlank()) {
-            throw new IllegalArgumentException("El nombre del rol es obligatorio");
+        if (requestDTO.getNombre() == null
+                || requestDTO.getNombre().isBlank()) {
+            throw new IllegalArgumentException(
+                    "El nombre del rol es obligatorio"
+            );
         }
 
-        if (rolRepository.findByNombre(requestDTO.getNombre()) != null) {
-            throw new RuntimeException("Ya existe un rol con ese nombre");
+        String nombre = requestDTO.getNombre().trim();
+
+        if (rolRepository.findByNombre(nombre).isPresent()) {
+            throw new RuntimeException(
+                    "Ya existe un rol con ese nombre"
+            );
         }
 
         Rol rol = new Rol();
-        rol.setNombre(requestDTO.getNombre());
+        rol.setNombre(nombre);
 
         Rol rolGuardado = rolRepository.save(rol);
+
         return toResponseDTO(rolGuardado);
     }
 
     @Override
     public RolResponseDTO buscarPorId(Long id) {
+
         Rol rol = rolRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+                .orElseThrow(() ->
+                        new RuntimeException("Rol no encontrado")
+                );
+
         return toResponseDTO(rol);
     }
 
     @Override
     public List<RolResponseDTO> listar() {
-        return rolRepository.findAll().stream()
+
+        return rolRepository.findAll()
+                .stream()
                 .map(this::toResponseDTO)
                 .toList();
     }
 
     @Override
     public RolResponseDTO buscarPorNombre(String nombre) {
+
         if (nombre == null || nombre.isBlank()) {
-            throw new IllegalArgumentException("El nombre del rol es obligatorio");
+            throw new IllegalArgumentException(
+                    "El nombre del rol es obligatorio"
+            );
         }
 
-        Rol rol = rolRepository.findByNombre(nombre);
-        if (rol == null) {
-            throw new RuntimeException("Rol no encontrado");
-        }
+        Rol rol = rolRepository.findByNombre(nombre.trim())
+                .orElseThrow(() ->
+                        new RuntimeException("Rol no encontrado")
+                );
 
         return toResponseDTO(rol);
     }
 
     @Override
-    public RolResponseDTO modificar(Long id, RolRequestDTO requestDTO) {
+    public RolResponseDTO modificar(
+            Long id,
+            RolRequestDTO requestDTO
+    ) {
+
         Rol rolExistente = rolRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+                .orElseThrow(() ->
+                        new RuntimeException("Rol no encontrado")
+                );
 
-        if (requestDTO.getNombre() == null || requestDTO.getNombre().isBlank()) {
-            throw new IllegalArgumentException("El nombre del rol es obligatorio");
+        if (requestDTO.getNombre() == null
+                || requestDTO.getNombre().isBlank()) {
+            throw new IllegalArgumentException(
+                    "El nombre del rol es obligatorio"
+            );
         }
 
-        Rol rolConMismoNombre = rolRepository.findByNombre(requestDTO.getNombre());
-        if (rolConMismoNombre != null && !rolConMismoNombre.getIdRol().equals(id)) {
-            throw new RuntimeException("Ya existe un rol con ese nombre");
+        String nombre = requestDTO.getNombre().trim();
+
+        Optional<Rol> rolEncontrado =
+                rolRepository.findByNombre(nombre);
+
+        if (rolEncontrado.isPresent()
+                && !rolEncontrado.get().getIdRol().equals(id)) {
+            throw new RuntimeException(
+                    "Ya existe un rol con ese nombre"
+            );
         }
 
-        rolExistente.setNombre(requestDTO.getNombre());
+        rolExistente.setNombre(nombre);
 
         Rol rolActualizado = rolRepository.save(rolExistente);
+
         return toResponseDTO(rolActualizado);
     }
 
     @Override
     public void eliminar(Long id) {
-        Rol rol = rolRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
-        if (rol.getUsuarios() != null && !rol.getUsuarios().isEmpty()) {
-            throw new RuntimeException("No se puede eliminar un rol que está asignado a usuarios");
+        Rol rol = rolRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Rol no encontrado")
+                );
+
+        if (rol.getUsuarios() != null
+                && !rol.getUsuarios().isEmpty()) {
+            throw new RuntimeException(
+                    "No se puede eliminar un rol que está asignado a usuarios"
+            );
         }
 
         rolRepository.delete(rol);
