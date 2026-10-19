@@ -2,6 +2,7 @@ package com.upc.demo.controller.usuarios;
 
 import com.upc.demo.dto.request.usuarios.LoginRequestDTO;
 import com.upc.demo.dto.request.usuarios.UsuarioRequestDTO;
+import com.upc.demo.dto.response.usuarios.AuthResponseDTO;
 import com.upc.demo.dto.response.usuarios.UsuarioResponseDTO;
 import com.upc.demo.service.usuarios.UsuarioService;
 
@@ -91,21 +92,29 @@ public class UsuarioController {
     }
 
     // Inicio de sesión
+
     @PostMapping("/login")
     public ResponseEntity<?> login(
             @RequestBody LoginRequestDTO requestDTO) {
-        try {
-            UsuarioResponseDTO usuario = usuarioService.login(requestDTO);
 
-            return ResponseEntity.ok(usuario);
+        try {
+            AuthResponseDTO respuesta = usuarioService.login(requestDTO);
+            return ResponseEntity.ok(respuesta);
+
+        } catch (org.springframework.security.authentication.DisabledException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("La cuenta se encuentra inactiva");
+
+        } catch (org.springframework.security.core.AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Credenciales inválidas");
 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No se pudo iniciar sesión");
+            return ResponseEntity.badRequest()
+                    .body(e.getMessage());
         }
     }
+
 
     @PutMapping("/actualizar/{id}")
     public ResponseEntity<?> actualizar(

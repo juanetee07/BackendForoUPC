@@ -2,6 +2,7 @@ package com.upc.demo.service.usuarios;
 
 import com.upc.demo.dto.request.usuarios.LoginRequestDTO;
 import com.upc.demo.dto.request.usuarios.UsuarioRequestDTO;
+import com.upc.demo.dto.response.usuarios.AuthResponseDTO;
 import com.upc.demo.dto.response.usuarios.UsuarioResponseDTO;
 
 import java.util.List;
@@ -26,5 +27,5 @@ public interface UsuarioService {
 
     UsuarioResponseDTO registrar(UsuarioRequestDTO requestDTO);
 
-    UsuarioResponseDTO login(LoginRequestDTO requestDTO);
+    AuthResponseDTO login(LoginRequestDTO requestDTO);
 }

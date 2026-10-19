@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -164,6 +165,18 @@ public class ResolucionServicio implements IResolucionServicio {
         resolucion.setEstado("ARCHIVADA");
 
         resolucionRepository.save(resolucion);
+    }
+
+    @Override
+    public List<ResolucionResponseDTO> listar6Resoluciones() {
+        return resolucionRepository.findAll().stream()
+                .sorted(Comparator.comparing(
+                        Resolucion::getFechaCreacion,
+                        Comparator.nullsLast(Comparator.reverseOrder())
+                ))
+                .limit(6)
+                .map(this::toResponseDTO)
+                .toList();
     }
 
     /**

@@ -16,4 +16,6 @@ public interface IResolucionServicio {
     ResolucionResponseDTO actualizar(Long id, ResolucionRequestDTO requestDTO);
 
     void eliminar(Long id);
+
+    List<ResolucionResponseDTO> listar6Resoluciones();
 }

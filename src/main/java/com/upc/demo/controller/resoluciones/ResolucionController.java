@@ -28,6 +28,14 @@ public class ResolucionController {
         );
     }
 
+    @GetMapping("/ultimas-seis")
+    public ResponseEntity<List<ResolucionResponseDTO>> listar6Resoluciones() {
+
+        return ResponseEntity.ok(
+                resolucionServicio.listar6Resoluciones()
+        );
+    }
+
     /**
      * Obtiene una resolución por ID.
      */

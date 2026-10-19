@@ -3,8 +3,9 @@
     <option name="ALTERNATIVE_JRE_PATH" value="17" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <envs>
-      <env name="DB_USER" value="root" />
       <env name="DB_PASSWORD" value="1234" />
+      <env name="DB_USER" value="root" />
+      <env name="JWT_SECRET" value="bd7aVjYHv11HkfixM+wU2JF/tLvOKchlgPCwbZuo+hA=" />
     </envs>
     <option name="MAIN_CLASS_NAME" value="com.upc.demo.DemoApplication" />
     <module name="demo" />
