@@ -59,6 +59,18 @@ public class SecurityConfig {
                                 "/api/noticias/ultimas-seis"
                         ).permitAll()
 
+                        // Resoluciones publicas: resumen
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/resoluciones/ultimas-seis"
+                        ).permitAll()
+
+                        // Categorias publicas
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/categorias/todos"
+                        ).permitAll()
+
                         // Noticias completas
                         .requestMatchers(
                                 HttpMethod.GET,
