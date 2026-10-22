@@ -3,6 +3,9 @@
     <option name="ALTERNATIVE_JRE_PATH" value="17" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <envs>
+      <env name="CLOUDINARY_API_KEY" value="174514641334392" />
+      <env name="CLOUDINARY_API_SECRET" value="oi2M0uxDzGVHMpOsjsRiWwmYCyk" />
+      <env name="CLOUDINARY_CLOUD_NAME" value="dpcjrnmly" />
       <env name="DB_PASSWORD" value="1234" />
       <env name="DB_USER" value="root" />
       <env name="JWT_SECRET" value="bd7aVjYHv11HkfixM+wU2JF/tLvOKchlgPCwbZuo+hA=" />

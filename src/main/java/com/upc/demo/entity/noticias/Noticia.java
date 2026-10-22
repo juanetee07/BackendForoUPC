@@ -23,6 +23,7 @@ public class Noticia {
 
     private String titulo;
 
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String cuerpo;
 
     private LocalDateTime fechaCreacion;
