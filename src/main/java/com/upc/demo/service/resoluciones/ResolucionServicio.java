@@ -170,6 +170,7 @@ public class ResolucionServicio implements IResolucionServicio {
     @Override
     public List<ResolucionResponseDTO> listar6Resoluciones() {
         return resolucionRepository.findAll().stream()
+                .filter(r -> "VIGENTE".equalsIgnoreCase(r.getEstado()))
                 .sorted(Comparator.comparing(
                         Resolucion::getFechaCreacion,
                         Comparator.nullsLast(Comparator.reverseOrder())
