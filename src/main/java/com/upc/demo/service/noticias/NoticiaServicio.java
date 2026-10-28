@@ -15,6 +15,7 @@ import com.upc.demo.repository.noticias.NoticiaRepositorio;
 import com.upc.demo.repository.usuarios.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.upc.demo.util.HtmlSanitizer;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -330,7 +331,9 @@ public class NoticiaServicio implements INoticiaServicio{
         Noticia noticia = new Noticia();
 
         noticia.setTitulo(noticiaRequest.getTitulo());
-        noticia.setCuerpo(noticiaRequest.getCuerpo());
+        noticia.setCuerpo(
+                HtmlSanitizer.sanitizar(noticiaRequest.getCuerpo())
+        );
         noticia.setCategoriaNoticia(categoria);
         noticia.setAutor(autor);
         noticia.setFechaCreacion(LocalDateTime.now());
@@ -403,7 +406,9 @@ public class NoticiaServicio implements INoticiaServicio{
 
         /* Actualizar los datos */
         noticiaExistente.setTitulo(noticiaActualizada.getTitulo());
-        noticiaExistente.setCuerpo(noticiaActualizada.getCuerpo());
+        noticiaExistente.setCuerpo(
+                HtmlSanitizer.sanitizar(noticiaActualizada.getCuerpo())
+        );
         noticiaExistente.setCategoriaNoticia(categoria);
         noticiaExistente.setFechaActualizacion(LocalDateTime.now());
 
