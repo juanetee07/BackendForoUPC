@@ -31,4 +31,6 @@ public interface INoticiaServicio {
     void eliminarNoticia(Long idNoticia);
 
     List<NoticiaResponse> listar6Noticias();
+
+    List<NoticiaResponse> listarNoticiasPendientes();
 }

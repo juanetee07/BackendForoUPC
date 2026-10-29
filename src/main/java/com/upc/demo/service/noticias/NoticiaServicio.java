@@ -304,6 +304,131 @@ public class NoticiaServicio implements INoticiaServicio{
     }
 
     @Override
+    public List<NoticiaResponse> listarNoticiasPendientes() {
+        return noticiaRepo.findAll()
+                .stream()
+                .filter(n -> n.getEstado() == EstadoNoticia.SUSPENDIDA || EstadoNoticia.BORRADOR == n.getEstado() || EstadoNoticia.ARCHIVADA == n.getEstado())
+                .map(n -> {
+
+                    NoticiaResponse response = new NoticiaResponse();
+
+                    response.setId(n.getId());
+                    response.setTitulo(n.getTitulo());
+                    response.setCuerpo(n.getCuerpo());
+                    response.setFechaCreacion(n.getFechaCreacion());
+                    response.setFechaPublicacion(n.getFechaPublicacion());
+                    response.setFechaActualizacion(n.getFechaActualizacion());
+                    response.setEstado(n.getEstado());
+
+                    // Autor
+                    if (n.getAutor() != null) {
+
+                        UsuarioResponseDTO autorResponse =
+                                new UsuarioResponseDTO();
+
+                        autorResponse.setIdUsuario(n.getAutor().getIdUsuario());
+                        autorResponse.setNombre(n.getAutor().getNombre());
+                        autorResponse.setApellido(n.getAutor().getApellido());
+                        autorResponse.setDni(n.getAutor().getDni());
+                        autorResponse.setEmail(n.getAutor().getEmail());
+                        autorResponse.setEstado(n.getAutor().getEstado());
+                        autorResponse.setEstadoSolicitud(
+                                n.getAutor().getEstadoSolicitud()
+                        );
+                        autorResponse.setFechaRegistro(
+                                n.getAutor().getFechaRegistro()
+                        );
+                        autorResponse.setUltimoAcceso(
+                                n.getAutor().getUltimoAcceso()
+                        );
+
+                        if (n.getAutor().getRol() != null) {
+                            autorResponse.setIdRol(
+                                    n.getAutor().getRol().getIdRol()
+                            );
+
+                            autorResponse.setNombreRol(
+                                    n.getAutor().getRol().getNombre()
+                            );
+                        }
+
+                        response.setAutor(autorResponse);
+                    }
+
+                    // Categoría
+                    if (n.getCategoriaNoticia() != null) {
+
+                        CategoriaNoticiaResponse categoriaResponse =
+                                new CategoriaNoticiaResponse();
+
+                        categoriaResponse.setId(
+                                n.getCategoriaNoticia().getId()
+                        );
+
+                        categoriaResponse.setNombre(
+                                n.getCategoriaNoticia().getNombre()
+                        );
+
+                        response.setCategoriaNoticia(categoriaResponse);
+                    }
+
+                    // Imágenes
+                    if (n.getImagenes() != null) {
+
+                        response.setImagenes(
+                                n.getImagenes()
+                                        .stream()
+                                        .map(imagen -> {
+
+                                            ImagenNoticiaResponse imagenResponse =
+                                                    new ImagenNoticiaResponse();
+
+                                            imagenResponse.setId(imagen.getId());
+                                            imagenResponse.setUrl(imagen.getUrl());
+                                            imagenResponse.setEpigrafe(
+                                                    imagen.getEpigrafe()
+                                            );
+
+                                            return imagenResponse;
+                                        })
+                                        .toList()
+                        );
+                    }
+
+                    // Archivos
+                    if (n.getArchivos() != null) {
+
+                        response.setArchivos(
+                                n.getArchivos()
+                                        .stream()
+                                        .map(archivo -> {
+
+                                            ArchivoNoticiaResponse archivoResponse =
+                                                    new ArchivoNoticiaResponse();
+
+                                            archivoResponse.setId(archivo.getId());
+                                            archivoResponse.setNombre(
+                                                    archivo.getNombre()
+                                            );
+                                            archivoResponse.setUrl(
+                                                    archivo.getUrl()
+                                            );
+                                            archivoResponse.setTipo(
+                                                    archivo.getTipo()
+                                            );
+
+                                            return archivoResponse;
+                                        })
+                                        .toList()
+                        );
+                    }
+
+                    return response;
+                })
+                .toList();
+    }
+
+    @Override
     public NoticiaResponse crearNoticia(NoticiaRequest noticiaRequest, Long usuarioId) {
 
         // Buscar la categoría

@@ -34,6 +34,14 @@ public class NoticiaControlador {
         );
     }
 
+    @GetMapping("noticias-pendientes")
+    public ResponseEntity<List<NoticiaResponse>> listarNoticiasPendientes() {
+
+        return ResponseEntity.ok(
+                noticiaServicio.listarNoticiasPendientes()
+        );
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<NoticiaResponse> consultarNoticia(
             @PathVariable Long id){

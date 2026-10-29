@@ -78,6 +78,12 @@ public class SecurityConfig {
                                 "/api/noticias/*"
                         ).authenticated()
 
+                        // Noticias pendientes
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/noticias/noticias-pendientes"
+                        ).hasAnyRole("ADMINISTRADOR")
+
                         // Crear noticias
                         .requestMatchers(
                                 HttpMethod.POST,
