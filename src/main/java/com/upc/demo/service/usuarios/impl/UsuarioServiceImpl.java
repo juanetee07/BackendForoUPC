@@ -1,5 +1,6 @@
 package com.upc.demo.service.usuarios.impl;
 
+import com.upc.demo.dto.request.usuarios.CrearUsuarioRequestDTO;
 import com.upc.demo.dto.request.usuarios.LoginRequestDTO;
 import com.upc.demo.dto.request.usuarios.UsuarioRequestDTO;
 import com.upc.demo.dto.response.usuarios.AuthResponseDTO;
@@ -362,6 +363,100 @@ public class UsuarioServiceImpl implements UsuarioService {
                 token,
                 toResponseDTO(actualizado)
         );
+    }
+
+    @Override
+    @Transactional
+    public UsuarioResponseDTO crearUsuario(CrearUsuarioRequestDTO requestDTO) {
+
+        if (requestDTO == null) {
+            throw new IllegalArgumentException(
+                    "Los datos del usuario son obligatorios"
+            );
+        }
+
+        // Validar campos obligatorios
+        if (requestDTO.getNombre() == null
+                || requestDTO.getNombre().isBlank()) {
+            throw new IllegalArgumentException("El nombre es obligatorio");
+        }
+
+        if (requestDTO.getApellido() == null
+                || requestDTO.getApellido().isBlank()) {
+            throw new IllegalArgumentException("El apellido es obligatorio");
+        }
+
+        if (requestDTO.getDni() == null
+                || requestDTO.getDni().isBlank()) {
+            throw new IllegalArgumentException("El DNI es obligatorio");
+        }
+
+        if (requestDTO.getEmail() == null
+                || requestDTO.getEmail().isBlank()) {
+            throw new IllegalArgumentException("El email es obligatorio");
+        }
+
+        if (requestDTO.getContraseña() == null
+                || requestDTO.getContraseña().isBlank()) {
+            throw new IllegalArgumentException("La contraseña es obligatoria");
+        }
+
+        if (requestDTO.getIdRol() == null) {
+            throw new IllegalArgumentException("El rol es obligatorio");
+        }
+
+        String email = requestDTO.getEmail()
+                .trim()
+                .toLowerCase(Locale.ROOT);
+
+        String dni = requestDTO.getDni().trim();
+
+        // Comprobar duplicados
+        if (usuarioRepository.findByEmail(email) != null) {
+            throw new IllegalArgumentException(
+                    "Ya existe un usuario con ese email"
+            );
+        }
+
+        if (usuarioRepository.findByDni(dni) != null) {
+            throw new IllegalArgumentException(
+                    "Ya existe un usuario con ese DNI"
+            );
+        }
+
+        // Buscar el rol solicitado
+        Rol rol = rolRepository.findById(requestDTO.getIdRol())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No se encontró el rol solicitado"
+                ));
+
+        // Construir usuario
+        Usuario usuario = new Usuario();
+
+        usuario.setNombre(requestDTO.getNombre().trim());
+        usuario.setApellido(requestDTO.getApellido().trim());
+        usuario.setDni(dni);
+        usuario.setEmail(email);
+
+        usuario.setContraseña(
+                passwordEncoder.encode(requestDTO.getContraseña())
+        );
+
+        usuario.setRol(rol);
+
+        String estado = requestDTO.getEstado();
+
+        usuario.setEstado(
+                estado == null || estado.isBlank()
+                        ? "ACTIVO"
+                        : estado.trim().toUpperCase(Locale.ROOT)
+        );
+
+        usuario.setFechaRegistro(LocalDateTime.now());
+
+        Usuario guardado = usuarioRepository.save(usuario);
+
+        return toResponseDTO(guardado);
     }
 
     // VALIDAR DATOS DE USUARIOS

@@ -2,8 +2,6 @@ package com.upc.demo.controller.noticias;
 
 import com.upc.demo.dto.request.noticias.ArchivoNoticiaRequest;
 import com.upc.demo.dto.response.noticias.ArchivoNoticiaResponse;
-import com.upc.demo.entity.noticias.ArchivoNoticia;
-import com.upc.demo.repository.noticias.ArchivoNoticiaRepositorio;
 import com.upc.demo.service.noticias.IArchivoServicio;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

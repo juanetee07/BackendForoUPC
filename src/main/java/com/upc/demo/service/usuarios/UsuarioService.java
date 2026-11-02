@@ -1,5 +1,6 @@
 package com.upc.demo.service.usuarios;
 
+import com.upc.demo.dto.request.usuarios.CrearUsuarioRequestDTO;
 import com.upc.demo.dto.request.usuarios.LoginRequestDTO;
 import com.upc.demo.dto.request.usuarios.UsuarioRequestDTO;
 import com.upc.demo.dto.response.usuarios.AuthResponseDTO;
@@ -28,4 +29,6 @@ public interface UsuarioService {
     UsuarioResponseDTO registrar(UsuarioRequestDTO requestDTO);
 
     AuthResponseDTO login(LoginRequestDTO requestDTO);
+
+    UsuarioResponseDTO crearUsuario(CrearUsuarioRequestDTO requestDTO);
 }

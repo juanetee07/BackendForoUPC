@@ -47,6 +47,11 @@ public class SecurityConfig {
                                 "/api/usuarios/registrar"
                         ).permitAll()
 
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/usuarios/crear"
+                        ).hasRole("ADMINISTRADOR")
+
                         // Documentación
                         .requestMatchers(
                                 "/swagger-ui/**",

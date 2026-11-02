@@ -1,5 +1,6 @@
 package com.upc.demo.controller.usuarios;
 
+import com.upc.demo.dto.request.usuarios.CrearUsuarioRequestDTO;
 import com.upc.demo.dto.request.usuarios.LoginRequestDTO;
 import com.upc.demo.dto.request.usuarios.UsuarioRequestDTO;
 import com.upc.demo.dto.response.usuarios.AuthResponseDTO;
@@ -59,17 +60,17 @@ public class UsuarioController {
 
     // Crear usuario mediante el CRUD
     @PostMapping("/crear")
-    public ResponseEntity<?> guardar(
-            @RequestBody UsuarioRequestDTO requestDTO) {
-        try {
-            UsuarioResponseDTO nuevoUsuario = usuarioService.guardar(requestDTO);
+    public ResponseEntity<?> crearUsuario(
+            @RequestBody CrearUsuarioRequestDTO requestDTO) {
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
+        try {
+            UsuarioResponseDTO nuevoUsuario =
+                    usuarioService.crearUsuario(requestDTO);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(nuevoUsuario);
 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-
-        } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
