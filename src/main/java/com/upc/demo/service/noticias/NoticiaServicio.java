@@ -533,11 +533,21 @@ public class NoticiaServicio implements INoticiaServicio{
 
         /* Actualizar los datos */
         noticiaExistente.setTitulo(noticiaActualizada.getTitulo());
+
         noticiaExistente.setCuerpo(
                 HtmlSanitizer.sanitizar(noticiaActualizada.getCuerpo())
         );
+
         noticiaExistente.setCategoriaNoticia(categoria);
+
         noticiaExistente.setFechaActualizacion(LocalDateTime.now());
+
+        /* Solo ADMINISTRADOR puede modificar el estado */
+        if (rol.equalsIgnoreCase("ADMINISTRADOR")
+                && noticiaActualizada.getEstado() != null) {
+
+            noticiaExistente.setEstado(noticiaActualizada.getEstado());
+        }
 
         /* Guardar */
         Noticia noticiaGuardada = noticiaRepo.save(noticiaExistente);
