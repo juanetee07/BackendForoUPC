@@ -34,6 +34,7 @@ public class NoticiaServicio implements INoticiaServicio{
     private CategoriaNoticiaRepositorio categoriaRepo;
 
     @Override
+    @Transactional(readOnly = true)
     public List<NoticiaResponse> listarNoticiasPublicadas() {
 
         return noticiaRepo.findAll()
@@ -160,6 +161,7 @@ public class NoticiaServicio implements INoticiaServicio{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<NoticiaResponse> listar6Noticias() {
 
         return noticiaRepo
@@ -431,6 +433,7 @@ public class NoticiaServicio implements INoticiaServicio{
     }
 
     @Override
+    @Transactional
     public NoticiaResponse crearNoticia(NoticiaRequest noticiaRequest, Long usuarioId) {
 
         // Buscar la categoría
@@ -484,6 +487,7 @@ public class NoticiaServicio implements INoticiaServicio{
     }
 
     @Override
+    @Transactional
     public NoticiaResponse editarNoticia(
             Long idNoticia,
             NoticiaRequest noticiaActualizada,
@@ -567,6 +571,7 @@ public class NoticiaServicio implements INoticiaServicio{
     }
 
     @Override
+    @Transactional
     public Noticia publicarNoticia(Long idNoticia, Long idAutor) {
 
         Noticia noticia = noticiaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("Noticia no encontrada"));
@@ -746,22 +751,26 @@ public class NoticiaServicio implements INoticiaServicio{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Noticia> buscarNoticiaPorTitulo(String titulo) {
         return noticiaRepo.findByTituloContainingIgnoreCase(titulo).stream().filter(n -> n.getEstado() == EstadoNoticia.PUBLICADA).toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Noticia> buscarNoticiaPorCategoria(Long categoriaId) {
         return noticiaRepo.findByCategoriaNoticiaId(categoriaId).stream().filter(noticia -> noticia.getEstado() == EstadoNoticia.PUBLICADA).toList();
 
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Noticia> buscarNoticiaPorFecha(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
         return noticiaRepo.findByFechaPublicacionBetween(fechaInicio, fechaFin).stream().filter(n -> n.getEstado() == EstadoNoticia.PUBLICADA).toList();
     }
 
     @Override
+    @Transactional
     public void eliminarNoticia(Long idNoticia) {
 
         Noticia noticia = noticiaRepo.findById(idNoticia).orElseThrow(() -> new RuntimeException("No existe una noticia con el ID: " + idNoticia));
