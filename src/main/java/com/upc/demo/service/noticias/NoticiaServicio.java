@@ -662,6 +662,7 @@ public class NoticiaServicio implements INoticiaServicio{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public NoticiaResponse consultarNoticia(Long idNoticia) {
 
         /* Verificar que la noticia exista */
