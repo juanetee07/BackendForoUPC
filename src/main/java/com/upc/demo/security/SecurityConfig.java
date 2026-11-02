@@ -2,6 +2,8 @@ package com.upc.demo.security;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,6 +13,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 
 @Configuration
 @RequiredArgsConstructor
@@ -26,11 +32,42 @@ public class SecurityConfig {
     }
 
     @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.setAllowedOrigins(
+                List.of("https://upcfrontend-nine.vercel.app")
+        );
+
+        configuration.setAllowedMethods(
+                List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+        );
+
+        configuration.setAllowedHeaders(
+                List.of("Authorization", "Content-Type")
+        );
+
+        configuration.setAllowCredentials(false);
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(
-            HttpSecurity http
+            HttpSecurity http,
+            CorsConfigurationSource corsConfigurationSource
     ) throws Exception {
 
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+
                 .csrf(csrf -> csrf.disable())
 
                 .sessionManagement(session ->
@@ -40,6 +77,9 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
+
+                        // Las solicitudes preflight de CORS no requieren autenticación.
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // Registro y login públicos
                         .requestMatchers(
@@ -64,16 +104,17 @@ public class SecurityConfig {
                                 "/api/noticias/ultimas-seis"
                         ).permitAll()
 
-                        // Resoluciones publicas: resumen
+                        // Resoluciones públicas: resumen
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/resoluciones/ultimas-seis"
                         ).permitAll()
 
-                        // Categorias publicas
+                        // Categorías públicas
                         .requestMatchers(
                                 HttpMethod.GET,
-                                "/api/categorias/todos"
+                                "/api/categorias/todos",
+                                "/api/categoria-noticias/todos"
                         ).permitAll()
 
                         // Noticias completas
@@ -87,7 +128,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/noticias/noticias-pendientes"
-                        ).hasAnyRole("ADMINISTRADOR")
+                        ).hasRole("ADMINISTRADOR")
 
                         // Crear noticias
                         .requestMatchers(
@@ -98,13 +139,13 @@ public class SecurityConfig {
                                 "PERSONAL_ESCOLAR"
                         )
 
-                        // Modificar y eliminar noticias:
-                        // la autoría se debe validar también en el servicio.
+                        // Modificar noticias
                         .requestMatchers(
                                 HttpMethod.PUT,
                                 "/api/noticias/*"
                         ).hasAnyRole("ADMINISTRADOR", "PERSONAL_ESCOLAR")
 
+                        // Eliminar noticias
                         .requestMatchers(
                                 HttpMethod.DELETE,
                                 "/api/noticias/*"
@@ -132,14 +173,14 @@ public class SecurityConfig {
                                 "/api/resoluciones/*"
                         ).hasAnyRole("ADMINISTRADOR", "PERSONAL_ESCOLAR")
 
-                        // Comentarios: acceso restringido a estos roles.
+                        // Comentarios
                         .requestMatchers("/api/comentarios/**")
                         .hasAnyRole(
                                 "ADMINISTRADOR",
                                 "PERSONAL_ESCOLAR"
                         )
 
-                        // Resto de la gestión de usuarios
+                        // Gestión de usuarios
                         .requestMatchers("/api/usuarios/**")
                         .hasRole("ADMINISTRADOR")
 
