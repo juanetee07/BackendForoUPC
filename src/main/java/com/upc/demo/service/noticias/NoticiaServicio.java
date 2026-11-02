@@ -16,6 +16,7 @@ import com.upc.demo.repository.usuarios.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.upc.demo.util.HtmlSanitizer;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -304,6 +305,7 @@ public class NoticiaServicio implements INoticiaServicio{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<NoticiaResponse> listarNoticiasPendientes() {
         return noticiaRepo.findAll()
                 .stream()
