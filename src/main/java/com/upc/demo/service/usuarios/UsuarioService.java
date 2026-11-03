@@ -22,6 +22,8 @@ public interface UsuarioService {
 
     UsuarioResponseDTO modificar(Long id, UsuarioRequestDTO requestDTO);
 
+    UsuarioResponseDTO modificarPerfil(Long id, UsuarioRequestDTO requestDTO);
+
     void eliminar(Long id);
 
     //AUTENTICACION

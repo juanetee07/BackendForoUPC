@@ -36,8 +36,13 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(
-                List.of("https://upcfrontend-nine.vercel.app")
+        configuration.setAllowedOriginPatterns(
+                List.of(
+                        "http://localhost:*",
+                        "http://127.0.0.1:*",
+                        "https://*.vercel.app",
+                        "https://upcfrontend-nine.vercel.app"
+                )
         );
 
         configuration.setAllowedMethods(
@@ -179,6 +184,12 @@ public class SecurityConfig {
                                 "ADMINISTRADOR",
                                 "PERSONAL_ESCOLAR"
                         )
+
+                        // Actualización de perfil propio (cualquier usuario autenticado)
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/api/usuarios/actualizar-perfil/*"
+                        ).authenticated()
 
                         // Gestión de usuarios
                         .requestMatchers("/api/usuarios/**")

@@ -117,6 +117,22 @@ public class UsuarioController {
     }
 
 
+    @PutMapping("/actualizar-perfil/{id}")
+    public ResponseEntity<?> actualizarPerfil(
+            @PathVariable Long id,
+            @RequestBody UsuarioRequestDTO requestDTO) {
+        try {
+            UsuarioResponseDTO usuarioActualizado = usuarioService.modificarPerfil(id, requestDTO);
+
+            return ResponseEntity.ok(usuarioActualizado);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
     @PutMapping("/actualizar/{id}")
     public ResponseEntity<?> actualizar(
             @PathVariable Long id,

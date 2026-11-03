@@ -251,6 +251,71 @@ public class UsuarioServiceImpl implements UsuarioService {
             usuario.setRol(rol);
         }
 
+        if (requestDTO.getContraseña() != null
+                && !requestDTO.getContraseña().isBlank()) {
+            usuario.setContraseña(
+                    passwordEncoder.encode(requestDTO.getContraseña())
+            );
+        }
+
+        if (requestDTO.getEstado() != null
+                && !requestDTO.getEstado().isBlank()) {
+            usuario.setEstado(requestDTO.getEstado().trim().toUpperCase(Locale.ROOT));
+        }
+
+        Usuario actualizado = usuarioRepository.save(usuario);
+        return toResponseDTO(actualizado);
+    }
+
+    // MODIFICAR PERFIL PROPIO (DATOS PERSONALES Y CONTRASEÑA)
+    @Override
+    public UsuarioResponseDTO modificarPerfil(
+            Long id,
+            UsuarioRequestDTO requestDTO
+    ) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Usuario no encontrado"
+                        )
+                );
+
+        if (requestDTO.getNombre() != null
+                && !requestDTO.getNombre().isBlank()) {
+            usuario.setNombre(requestDTO.getNombre().trim());
+        }
+
+        if (requestDTO.getApellido() != null
+                && !requestDTO.getApellido().isBlank()) {
+            usuario.setApellido(requestDTO.getApellido().trim());
+        }
+
+        if (requestDTO.getEmail() != null
+                && !requestDTO.getEmail().isBlank()) {
+
+            String email = requestDTO.getEmail()
+                    .trim()
+                    .toLowerCase(Locale.ROOT);
+
+            Usuario existente = usuarioRepository.findByEmail(email);
+
+            if (existente != null
+                    && !existente.getIdUsuario().equals(id)) {
+                throw new IllegalArgumentException(
+                        "Ese email ya pertenece a otro usuario"
+                );
+            }
+
+            usuario.setEmail(email);
+        }
+
+        if (requestDTO.getContraseña() != null
+                && !requestDTO.getContraseña().isBlank()) {
+            usuario.setContraseña(
+                    passwordEncoder.encode(requestDTO.getContraseña())
+            );
+        }
+
         Usuario actualizado = usuarioRepository.save(usuario);
         return toResponseDTO(actualizado);
     }
