@@ -43,7 +43,7 @@ public class ComentarioController {
 
         return ResponseEntity.ok(comentariosResolucion);
     }
-    
+
     /**
      * Obtiene un comentario por ID.
      */
@@ -58,8 +58,9 @@ public class ComentarioController {
 
     /**
      * Crea un nuevo comentario.
+     * Soporta tanto /api/comentarios como /api/comentarios/guardar
      */
-    @PostMapping
+    @PostMapping(value = {"", "/", "/guardar"})
     public ResponseEntity<ComentarioResponseDTO> guardar(
             @RequestBody ComentarioRequestDTO requestDTO) {
 
