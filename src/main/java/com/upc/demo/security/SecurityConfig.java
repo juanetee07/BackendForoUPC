@@ -178,16 +178,22 @@ public class SecurityConfig {
                                 "/api/resoluciones/*"
                         ).hasAnyRole("ADMINISTRADOR", "PERSONAL_ESCOLAR")
 
-                        // Crear comentarios
-                        .requestMatchers(HttpMethod.POST, "/api/comentarios").hasAnyRole(
+                        // 1. Permitir creación de comentarios a Estudiantes, Administradores y Personal Escolar
+                        .requestMatchers(HttpMethod.POST, "/api/comentarios", "/api/comentarios/**").hasAnyRole(
                                 "ESTUDIANTE",
                                 "ADMINISTRADOR",
                                 "PERSONAL_ESCOLAR"
                         )
 
-                        // Comentarios
-                        .requestMatchers("/api/comentarios/**")
-                        .hasAnyRole(
+                        // 2. Permitir ver comentarios de una resolución (evita el 403 al entrar a ver la resolución)
+                        .requestMatchers(HttpMethod.GET, "/api/comentarios/resolucion/**").hasAnyRole(
+                                "ESTUDIANTE",
+                                "ADMINISTRADOR",
+                                "PERSONAL_ESCOLAR"
+                        )
+
+                        // 3. Todo el resto de comentarios (aprobar, moderar, obtener todos, eliminar) solo para Administrador y Personal
+                        .requestMatchers("/api/comentarios/**").hasAnyRole(
                                 "ADMINISTRADOR",
                                 "PERSONAL_ESCOLAR"
                         )

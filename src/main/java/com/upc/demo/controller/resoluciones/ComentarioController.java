@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/comentarios")
+@CrossOrigin(origins = "*")
 public class ComentarioController {
 
     @Autowired
@@ -28,6 +29,21 @@ public class ComentarioController {
         );
     }
 
+    /**
+     * Obtiene comentarios de una resolución específica reutilizando listarTodos().
+     */
+    @GetMapping("/resolucion/{idResolucion}")
+    public ResponseEntity<List<ComentarioResponseDTO>> listarPorResolucion(
+            @PathVariable Long idResolucion) {
+
+        List<ComentarioResponseDTO> comentariosResolucion = comentarioServicio.listarTodos()
+                .stream()
+                .filter(c -> idResolucion.equals(c.getIdResolucion()))
+                .toList(); // o .collect(Collectors.toList()) si usas Java 11 o menor
+
+        return ResponseEntity.ok(comentariosResolucion);
+    }
+    
     /**
      * Obtiene un comentario por ID.
      */
