@@ -178,6 +178,13 @@ public class SecurityConfig {
                                 "/api/resoluciones/*"
                         ).hasAnyRole("ADMINISTRADOR", "PERSONAL_ESCOLAR")
 
+                        // Crear comentarios
+                        .requestMatchers(HttpMethod.POST, "/api/comentarios").hasAnyRole(
+                                "ESTUDIANTE",
+                                "ADMINISTRADOR",
+                                "PERSONAL_ESCOLAR"
+                        )
+
                         // Comentarios
                         .requestMatchers("/api/comentarios/**")
                         .hasAnyRole(
