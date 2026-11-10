@@ -3,6 +3,7 @@ package com.upc.demo.controller.resoluciones;
 import com.upc.demo.dto.request.resoluciones.CategoriaResolucionRequestDTO;
 import com.upc.demo.dto.response.resoluciones.CategoriaResolucionResponseDTO;
 import com.upc.demo.service.resoluciones.ICategoriaResolucionServicio;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,7 @@ public class CategoriaResolucionController {
      * Obtiene una categoría por ID.
      */
     @GetMapping("/{id}")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<CategoriaResolucionResponseDTO> buscarPorId(
             @PathVariable Long id) {
 
@@ -44,6 +46,7 @@ public class CategoriaResolucionController {
      * Crea una nueva categoría.
      */
     @PostMapping
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<CategoriaResolucionResponseDTO> guardar(
             @RequestBody CategoriaResolucionRequestDTO requestDTO) {
 
@@ -55,6 +58,7 @@ public class CategoriaResolucionController {
      * Actualiza una categoría existente.
      */
     @PutMapping("/{id}")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<CategoriaResolucionResponseDTO> actualizar(
             @PathVariable Long id,
             @RequestBody CategoriaResolucionRequestDTO requestDTO) {
@@ -68,6 +72,7 @@ public class CategoriaResolucionController {
      * Elimina una categoría.
      */
     @DeleteMapping("/{id}")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> eliminar(
             @PathVariable Long id) {
 

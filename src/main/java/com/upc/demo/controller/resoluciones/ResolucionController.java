@@ -3,6 +3,7 @@ package com.upc.demo.controller.resoluciones;
 import com.upc.demo.dto.request.resoluciones.ResolucionRequestDTO;
 import com.upc.demo.dto.response.resoluciones.ResolucionResponseDTO;
 import com.upc.demo.service.resoluciones.IResolucionServicio;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class ResolucionController {
      * Obtiene todas las resoluciones.
      */
     @GetMapping("/todos")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<List<ResolucionResponseDTO>> listarTodos() {
 
         return ResponseEntity.ok(
@@ -40,6 +42,7 @@ public class ResolucionController {
      * Obtiene una resolución por ID.
      */
     @GetMapping("/{id}")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<ResolucionResponseDTO> buscarPorId(
             @PathVariable Long id) {
 
@@ -52,6 +55,7 @@ public class ResolucionController {
      * Crea una nueva resolución.
      */
     @PostMapping
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<ResolucionResponseDTO> guardar(
             @RequestBody ResolucionRequestDTO requestDTO) {
 
@@ -63,6 +67,7 @@ public class ResolucionController {
      * Actualiza una resolución existente.
      */
     @PutMapping("/{id}")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<ResolucionResponseDTO> actualizar(
             @PathVariable Long id,
             @RequestBody ResolucionRequestDTO requestDTO) {
@@ -76,6 +81,7 @@ public class ResolucionController {
      * Archiva una resolución.
      */
     @DeleteMapping("/{id}")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> eliminar(
             @PathVariable Long id) {
 

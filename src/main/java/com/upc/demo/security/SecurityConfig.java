@@ -50,7 +50,7 @@ public class SecurityConfig {
         );
 
         configuration.setAllowedHeaders(
-                List.of("Authorization", "Content-Type")
+                List.of("*")
         );
 
         configuration.setAllowCredentials(false);

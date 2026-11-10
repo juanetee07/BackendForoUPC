@@ -3,6 +3,7 @@ package com.upc.demo.controller.resoluciones;
 import com.upc.demo.dto.request.resoluciones.ComentarioRequestDTO;
 import com.upc.demo.dto.response.resoluciones.ComentarioResponseDTO;
 import com.upc.demo.service.resoluciones.IComentarioServicio;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/comentarios")
 @CrossOrigin(origins = "*")
+@SecurityRequirement(name = "bearerAuth")
 public class ComentarioController {
 
     @Autowired
